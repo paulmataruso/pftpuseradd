@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIOS FTP Portal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg:       #080a0f;
+  --bg2:      #0e1118;
+  --bg3:      #141820;
+  --bg4:      #1a1f2e;
+  --border:   #232836;
+  --border2:  #2e3447;
+  --accent:   #3b82f6;
+  --accent-h: #60a5fa;
+  --green:    #10b981;
+  --red:      #ef4444;
+  --yellow:   #f59e0b;
+  --purple:   #8b5cf6;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'Inter', sans-serif;
+  --radius:   6px;
+  --sidebar:  220px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── PAGES ── */
+.page { display: none; min-height: 100vh; }
+.page.active { display: flex; }
+
+/* ══════════════════════════════════════════════
+   REGISTER PAGE
+══════════════════════════════════════════════ */
+#page-register {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(59,130,246,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 80% 80%, rgba(139,92,246,0.05) 0%, transparent 70%),
+    var(--bg);
+}
+
+.reg-container { width: 100%; max-width: 460px; }
+
+.reg-brand {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.reg-brand .logo-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.reg-brand .logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.reg-brand h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.reg-brand p {
+  color: var(--text2);
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+}
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.75rem;
+}
+
+.access-info {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  color: var(--text2);
+}
+
+.access-info .access-title {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+
+.access-info ul { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
+.access-info li::before { content: "▸ "; color: var(--accent); font-size: 0.7rem; }
+
+.field { margin-bottom: 1.1rem; }
+
+.field label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 0.4rem;
+}
+
+.field input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
+
+.field input.err { border-color: var(--red); }
+.field-err { font-size: 0.72rem; color: var(--red); margin-top: 0.3rem; display: none; }
+.field-hint { font-size: 0.72rem; color: var(--text3); margin-top: 0.3rem; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--sans);
+  font-size: 0.83rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary  { background: var(--accent); color: #fff; width: 100%; }
+.btn-primary:hover:not(:disabled) { background: var(--accent-h); }
+.btn-ghost    { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
+.btn-ghost:hover:not(:disabled) { border-color: var(--text2); color: var(--text); }
+.btn-danger   { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: var(--red); }
+.btn-danger:hover:not(:disabled) { background: rgba(239,68,68,0.2); }
+.btn-success  { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: var(--green); }
+.btn-success:hover:not(:disabled) { background: rgba(16,185,129,0.2); }
+.btn-sm { padding: 0.35rem 0.75rem; font-size: 0.75rem; }
+.btn-xs { padding: 0.25rem 0.55rem; font-size: 0.7rem; }
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.83rem;
+  margin-bottom: 1rem;
+  display: none;
+  line-height: 1.5;
+}
+.alert.ok  { background: rgba(16,185,129,0.1);  border: 1px solid rgba(16,185,129,0.3); color: var(--green); }
+.alert.err { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.3);  color: var(--red); }
+.alert.info{ background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); color: var(--accent-h); }
+
+.reg-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.78rem;
+  color: var(--text3);
+}
+
+.reg-footer a {
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* ══════════════════════════════════════════════
+   ADMIN PAGE
+══════════════════════════════════════════════ */
+#page-admin { flex-direction: column; }
+
+/* Login overlay */
+#admin-login {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg);
+}
+
+#admin-login .card { width: 100%; max-width: 340px; }
+#admin-login h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* App shell */
+#admin-app { display: none; flex: 1; overflow: hidden; }
+
+.shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sidebar-brand .logo-icon {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.sidebar-brand span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sidebar-brand small {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text3);
+  font-weight: 400;
+}
+
+.nav-section {
+  padding: 1rem 0.6rem 0.5rem;
+}
+
+.nav-label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  padding: 0 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  color: var(--text2);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.12s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active { background: rgba(59,130,246,0.12); color: var(--accent-h); }
+.nav-item .nav-icon { font-size: 0.9rem; width: 16px; text-align: center; flex-shrink: 0; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1rem 0.6rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Main content */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.topbar {
+  height: 52px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  gap: 1rem;
+  background: var(--bg2);
+  flex-shrink: 0;
+}
+
+.topbar-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  flex: 1;
+}
+
+.topbar-actions { display: flex; gap: 0.5rem; align-items: center; }
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+/* ── PANELS ── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+}
+
+.stat-card .stat-label {
+  font-size: 0.72rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4rem;
+}
+
+.stat-card .stat-val {
+  font-family: var(--mono);
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-card .stat-sub {
+  font-size: 0.72rem;
+  color: var(--text3);
+  margin-top: 0.3rem;
+}
+
+/* Table */
+.table-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.search-box {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 0.82rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius);
+  outline: none;
+  width: 220px;
+  transition: border-color 0.15s;
+}
+
+.search-box:focus { border-color: var(--accent); }
+
+.filter-select {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-size: 0.78rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius);
+  outline: none;
+}
+
+.table-wrap { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; }
+
+thead th {
+  padding: 0.6rem 1rem;
+  text-align: left;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text3);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+tbody td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--bg3); }
+
+.mono { font-family: var(--mono); font-size: 0.8rem; }
+.muted { color: var(--text2); }
+.small { font-size: 0.75rem; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+.badge-on  { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+.badge-on::before { background: var(--green); }
+.badge-off { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+.badge-off::before { background: var(--red); }
+
+.action-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text3);
+  font-size: 0.85rem;
+}
+
+/* ── USER DETAIL PANEL ── */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 680px) {
+  .detail-grid { grid-template-columns: 1fr; }
+}
+
+.detail-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.detail-card h3 {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+}
+
+.detail-row:last-child { border-bottom: none; }
+.detail-row .dr-label { color: var(--text3); font-size: 0.75rem; }
+.detail-row .dr-val { font-family: var(--mono); font-size: 0.78rem; text-align: right; }
+
+.inline-edit {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.inline-input {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  outline: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.inline-input:focus { border-color: var(--accent); }
+
+/* Audit log */
+.audit-list { display: flex; flex-direction: column; }
+
+.audit-item {
+  display: grid;
+  grid-template-columns: 150px 110px 150px 1fr 100px;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.78rem;
+  align-items: center;
+}
+
+.audit-item:last-child { border-bottom: none; }
+.audit-item:hover { background: var(--bg3); }
+
+.audit-head {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text3);
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 150px 110px 150px 1fr 100px;
+  gap: 0.75rem;
+}
+
+.action-pill {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.ap-register        { background: rgba(59,130,246,0.15); color: #93c5fd; }
+.ap-admin_login     { background: rgba(139,92,246,0.15); color: #c4b5fd; }
+.ap-admin_delete    { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+.ap-admin_enabled   { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+.ap-admin_disabled  { background: rgba(245,158,11,0.15); color: #fcd34d; }
+.ap-admin_password_change { background: rgba(245,158,11,0.15); color: #fcd34d; }
+.ap-admin_email_change    { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+.ap-manual_sync     { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+.ap-default         { background: var(--bg3); color: var(--text3); }
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text3);
+  margin-bottom: 1.25rem;
+}
+
+.breadcrumb a { color: var(--accent); cursor: pointer; text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb span { color: var(--text3); }
+
+/* Modal */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-bg.open { display: flex; }
+
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.modal h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+textarea.inline-input {
+  resize: vertical;
+  min-height: 80px;
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+}
+
+/* Spinner */
+.spin {
+  display: inline-block;
+  width: 12px; height: 12px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Toast */
+#toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.1rem;
+  font-size: 0.82rem;
+  z-index: 300;
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  max-width: 320px;
+}
+
+#toast.show { display: flex; }
+#toast.ok   { border-left: 3px solid var(--green); }
+#toast.err  { border-left: 3px solid var(--red); }
+#toast.info { border-left: 3px solid var(--accent); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     REGISTER PAGE
+══════════════════════════════════════════════ -->
+<div id="page-register" class="page active">
+  <div class="reg-container">
+    <div class="reg-brand">
+      <div class="logo-mark">
+        <div class="logo-icon">FTP</div>
+      </div>
+      <h1>CIOS File Portal</h1>
+      <p>Create an account to access the FTP server</p>
+    </div>
+
+    <div class="card">
+      <div id="reg-alert" class="alert"></div>
+
+      <div class="access-info">
+        <div class="access-title">What you get</div>
+        <ul>
+          <li>Browse &amp; download the full file archive</li>
+          <li>Upload files to <code style="color:var(--accent);font-family:var(--mono)">/upload</code> only</li>
+          <li>Cannot delete or rename existing files</li>
+        </ul>
+      </div>
+
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="r-user" placeholder="your_username" autocomplete="username">
+        <div class="field-hint">3–32 chars · letters, numbers, underscores</div>
+        <div class="field-err" id="re-user"></div>
+      </div>
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="r-email" placeholder="you@example.com" autocomplete="email">
+        <div class="field-err" id="re-email"></div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="r-pass" placeholder="Minimum 8 characters" autocomplete="new-password">
+        <div class="field-err" id="re-pass"></div>
+      </div>
+      <div class="field">
+        <label>Confirm password</label>
+        <input type="password" id="r-conf" placeholder="Repeat password" autocomplete="new-password">
+        <div class="field-err" id="re-conf"></div>
+      </div>
+
+      <button class="btn btn-primary" id="reg-btn" onclick="doRegister()">Create Account</button>
+    </div>
+
+    <div class="reg-footer">
+      Admin? <a onclick="showPage('admin')">Sign in here</a>
+      &nbsp;·&nbsp;
+      Server: <span style="font-family:var(--mono);color:var(--accent)">cios.dhitechnical.com:21</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ADMIN PAGE
+══════════════════════════════════════════════ -->
+<div id="page-admin" class="page">
+
+  <!-- Login -->
+  <div id="admin-login">
+    <div class="card">
+      <h2>⚙ Admin Portal</h2>
+      <div id="al-alert" class="alert"></div>
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="al-user" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="al-pass" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter')doAdminLogin()">
+      </div>
+      <button class="btn btn-primary" onclick="doAdminLogin()">Sign In</button>
+      <div style="margin-top:1rem;text-align:center">
+        <a style="font-size:0.78rem;color:var(--text3);cursor:pointer" onclick="showPage('register')">← Back to registration</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Shell -->
+  <div id="admin-app">
+    <div class="shell">
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="logo-icon">FTP</div>
+          <div>
+            <span>CIOS Admin</span>
+            <small>FTP Management</small>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-label">Overview</div>
+          <button class="nav-item active" onclick="navTo('dashboard')" id="nav-dashboard">
+            <span class="nav-icon">◈</span> Dashboard
+          </button>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-label">Users</div>
+          <button class="nav-item" onclick="navTo('users')" id="nav-users">
+            <span class="nav-icon">◉</span> All Users
+          </button>
+          <button class="nav-item" onclick="navTo('audit')" id="nav-audit">
+            <span class="nav-icon">◎</span> Audit Log
+          </button>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-label">System</div>
+          <button class="nav-item" onclick="doSync()" id="nav-sync">
+            <span class="nav-icon">↻</span> Sync passwd
+          </button>
+        </div>
+
+        <div class="sidebar-footer">
+          <button class="nav-item" onclick="doLogout()">
+            <span class="nav-icon">⇤</span> Logout
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <div class="main">
+        <div class="topbar">
+          <div class="topbar-title" id="topbar-title">Dashboard</div>
+          <div class="topbar-actions" id="topbar-actions"></div>
+        </div>
+
+        <div class="content">
+
+          <!-- DASHBOARD -->
+          <div id="panel-dashboard" class="panel active">
+            <div class="stats-row" id="stats-row">
+              <div class="stat-card">
+                <div class="stat-label">Total Users</div>
+                <div class="stat-val" id="s-total" style="color:var(--accent)">—</div>
+                <div class="stat-sub">registered accounts</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Active</div>
+                <div class="stat-val" id="s-enabled" style="color:var(--green)">—</div>
+                <div class="stat-sub">can log in now</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Disabled</div>
+                <div class="stat-val" id="s-disabled" style="color:var(--red)">—</div>
+                <div class="stat-sub">blocked from FTP</div>
+              </div>
+            </div>
+
+            <div class="table-card">
+              <div class="table-toolbar">
+                <span style="font-size:0.8rem;font-weight:500">Recent Registrations</span>
+                <button class="btn btn-ghost btn-sm" onclick="navTo('users')" style="margin-left:auto">View all →</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Username</th><th>Email</th><th>Status</th><th>Registered</th><th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="recent-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- USERS LIST -->
+          <div id="panel-users" class="panel">
+            <div class="table-card">
+              <div class="table-toolbar">
+                <input class="search-box" type="text" placeholder="Search username or email…"
+                       id="user-search" oninput="renderUsers()">
+                <select class="filter-select" id="user-filter" onchange="renderUsers()">
+                  <option value="all">All status</option>
+                  <option value="enabled">Enabled only</option>
+                  <option value="disabled">Disabled only</option>
+                </select>
+                <span id="user-count" style="font-size:0.75rem;color:var(--text3);margin-left:auto"></span>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Username</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Registered</th>
+                      <th>Last Login</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="users-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- USER DETAIL -->
+          <div id="panel-user-detail" class="panel">
+            <div class="breadcrumb">
+              <a onclick="navTo('users')">Users</a>
+              <span>›</span>
+              <span id="detail-username-bc">—</span>
+            </div>
+
+            <div class="detail-grid">
+
+              <!-- Account Info -->
+              <div class="detail-card">
+                <h3>👤 Account Info</h3>
+                <div class="detail-row">
+                  <span class="dr-label">Username</span>
+                  <span class="dr-val mono" id="d-username">—</span>
+                </div>
+                <div class="detail-row">
+                  <span class="dr-label">Status</span>
+                  <span id="d-status">—</span>
+                </div>
+                <div class="detail-row">
+                  <span class="dr-label">Registered</span>
+                  <span class="dr-val" id="d-created">—</span>
+                </div>
+                <div class="detail-row">
+                  <span class="dr-label">Last Login</span>
+                  <span class="dr-val" id="d-lastlogin">—</span>
+                </div>
+                <div class="detail-row">
+                  <span class="dr-label">User ID</span>
+                  <span class="dr-val" id="d-id" style="font-size:0.65rem;color:var(--text3)">—</span>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="detail-card">
+                <h3>✉ Email Address</h3>
+                <div style="margin-bottom:0.75rem;font-size:0.82rem;color:var(--text2)" id="d-email-display">—</div>
+                <div class="inline-edit">
+                  <input class="inline-input" type="email" id="d-email-input" placeholder="new@email.com">
+                  <button class="btn btn-ghost btn-sm" onclick="saveEmail()">Save</button>
+                </div>
+              </div>
+
+              <!-- Password -->
+              <div class="detail-card">
+                <h3>🔑 Change Password</h3>
+                <div class="field" style="margin-bottom:0.75rem">
+                  <input class="inline-input" type="password" id="d-newpass" placeholder="New password (min 8 chars)" style="width:100%">
+                </div>
+                <div class="field" style="margin-bottom:0.75rem">
+                  <input class="inline-input" type="password" id="d-confpass" placeholder="Confirm new password" style="width:100%">
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="savePassword()">Update Password</button>
+              </div>
+
+              <!-- Notes -->
+              <div class="detail-card">
+                <h3>📝 Admin Notes</h3>
+                <textarea class="inline-input" id="d-notes" placeholder="Internal notes about this user…" style="width:100%;margin-bottom:0.75rem;min-height:80px"></textarea>
+                <button class="btn btn-ghost btn-sm" onclick="saveNotes()">Save Notes</button>
+              </div>
+
+            </div>
+
+            <!-- Danger zone -->
+            <div class="detail-card" style="border-color:rgba(239,68,68,0.25)">
+              <h3 style="color:var(--red)">⚠ Actions</h3>
+              <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem">
+                <button class="btn btn-sm" id="d-toggle-btn" onclick="detailToggle()">—</button>
+                <button class="btn btn-danger btn-sm" onclick="detailDelete()">Delete Account</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- AUDIT LOG -->
+          <div id="panel-audit" class="panel">
+            <div class="table-card">
+              <div class="table-toolbar">
+                <span style="font-size:0.8rem;font-weight:500">Audit Log</span>
+                <button class="btn btn-ghost btn-sm" onclick="loadAudit()" style="margin-left:auto">↻ Refresh</button>
+              </div>
+              <div class="audit-head">
+                <div>Time</div><div>User</div><div>Action</div><div>Detail</div><div>IP</div>
+              </div>
+              <div class="audit-list" id="audit-list"></div>
+            </div>
+          </div>
+
+        </div><!-- /content -->
+      </div><!-- /main -->
+    </div><!-- /shell -->
+  </div><!-- /admin-app -->
+</div><!-- /page-admin -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+const API = '/api';
+let tok = sessionStorage.getItem('cios_tok') || null;
+let allUsers = [];
+let detailUser = null;
+
+// ── PAGES ───────────────────────────────────────────────────────────────────
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  if (p === 'admin') initAdmin();
+}
+
+// ── REGISTER ────────────────────────────────────────────────────────────────
+function clearRegErr() {
+  ['user','email','pass','conf'].forEach(f => {
+    document.getElementById('re-' + f).style.display = 'none';
+    document.getElementById('r-' + f).classList.remove('err');
+  });
+}
+
+function setRegErr(f, msg) {
+  const e = document.getElementById('re-' + f);
+  e.textContent = msg; e.style.display = 'block';
+  document.getElementById('r-' + f).classList.add('err');
+}
+
+function regAlert(msg, type) {
+  const el = document.getElementById('reg-alert');
+  el.textContent = msg; el.className = 'alert ' + type; el.style.display = 'block';
+}
+
+async function doRegister() {
+  clearRegErr();
+  document.getElementById('reg-alert').style.display = 'none';
+  const username = document.getElementById('r-user').value.trim();
+  const email    = document.getElementById('r-email').value.trim();
+  const password = document.getElementById('r-pass').value;
+  const confirm  = document.getElementById('r-conf').value;
+
+  let ok = true;
+  if (!username) { setRegErr('user','Required'); ok=false; }
+  if (!email)    { setRegErr('email','Required'); ok=false; }
+  if (!password) { setRegErr('pass','Required'); ok=false; }
+  if (password !== confirm) { setRegErr('conf','Passwords do not match'); ok=false; }
+  if (!ok) return;
+
+  const btn = document.getElementById('reg-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Creating…';
+
+  try {
+    const res = await fetch(API + '/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password, confirm_password: confirm })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      regAlert('✓ ' + data.message, 'ok');
+      ['user','email','pass','conf'].forEach(f => document.getElementById('r-' + f).value = '');
+    } else {
+      const msg = Array.isArray(data.detail)
+        ? data.detail.map(e => e.msg).join(' · ')
+        : (data.detail || 'Registration failed');
+      regAlert(msg, 'err');
+    }
+  } catch(e) { regAlert('Network error — please try again', 'err'); }
+  finally { btn.disabled = false; btn.textContent = 'Create Account'; }
+}
+
+// ── ADMIN AUTH ───────────────────────────────────────────────────────────────
+function initAdmin() {
+  if (tok) { showApp(); loadDashboard(); }
+}
+
+async function doAdminLogin() {
+  const username = document.getElementById('al-user').value.trim();
+  const password = document.getElementById('al-pass').value;
+  const alertEl  = document.getElementById('al-alert');
+  alertEl.style.display = 'none';
+
+  try {
+    const res = await fetch(API + '/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      tok = data.access_token;
+      sessionStorage.setItem('cios_tok', tok);
+      showApp();
+      loadDashboard();
+    } else {
+      alertEl.textContent = data.detail || 'Login failed';
+      alertEl.className = 'alert err';
+      alertEl.style.display = 'block';
+    }
+  } catch(e) {
+    alertEl.textContent = 'Network error';
+    alertEl.className = 'alert err';
+    alertEl.style.display = 'block';
+  }
+}
+
+function showApp() {
+  document.getElementById('admin-login').style.display = 'none';
+  document.getElementById('admin-app').style.display = 'block';
+}
+
+function doLogout() {
+  tok = null;
+  sessionStorage.removeItem('cios_tok');
+  document.getElementById('admin-login').style.display = 'flex';
+  document.getElementById('admin-app').style.display = 'none';
+  document.getElementById('al-user').value = '';
+  document.getElementById('al-pass').value = '';
+}
+
+// ── API HELPERS ───────────────────────────────────────────────────────────────
+async function api(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Authorization': 'Bearer ' + tok }
+  };
+  if (body) {
+    opts.headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(body);
+  }
+  const res = await fetch(API + path, opts);
+  if (res.status === 401) { doLogout(); throw new Error('Unauthorized'); }
+  return { ok: res.ok, status: res.status, data: await res.json() };
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────────────────────
+const panelTitles = {
+  dashboard: 'Dashboard',
+  users: 'All Users',
+  'user-detail': 'User Detail',
+  audit: 'Audit Log'
+};
+
+function navTo(panel) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + panel).classList.add('active');
+  const navEl = document.getElementById('nav-' + panel);
+  if (navEl) navEl.classList.add('active');
+  document.getElementById('topbar-title').textContent = panelTitles[panel] || panel;
+  document.getElementById('topbar-actions').innerHTML = '';
+
+  if (panel === 'dashboard') loadDashboard();
+  if (panel === 'users')     loadUsers();
+  if (panel === 'audit')     loadAudit();
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const { data } = await api('GET', '/admin/stats');
+    document.getElementById('s-total').textContent   = data.total;
+    document.getElementById('s-enabled').textContent  = data.enabled;
+    document.getElementById('s-disabled').textContent = data.disabled;
+  } catch(e) {}
+
+  try {
+    const { data } = await api('GET', '/admin/users');
+    allUsers = data.users;
+    const recent = [...allUsers].slice(0, 8);
+    document.getElementById('recent-tbody').innerHTML = recent.map(u => `
+      <tr>
+        <td class="mono">${esc(u.username)}</td>
+        <td class="muted small">${esc(u.email)}</td>
+        <td><span class="badge ${u.enabled ? 'badge-on' : 'badge-off'}">${u.enabled ? 'Active' : 'Disabled'}</span></td>
+        <td class="muted small">${fmtDate(u.created_at)}</td>
+        <td><button class="btn btn-ghost btn-xs" onclick="openDetail('${u.id}')">View →</button></td>
+      </tr>
+    `).join('') || '<tr><td colspan="5" class="empty">No users yet</td></tr>';
+  } catch(e) {}
+}
+
+// ── USERS LIST ────────────────────────────────────────────────────────────────
+async function loadUsers() {
+  try {
+    const { data } = await api('GET', '/admin/users');
+    allUsers = data.users;
+    renderUsers();
+  } catch(e) { toast('Failed to load users', 'err'); }
+}
+
+function renderUsers() {
+  const q      = (document.getElementById('user-search')?.value || '').toLowerCase();
+  const filter = document.getElementById('user-filter')?.value || 'all';
+  let users    = allUsers;
+
+  if (filter === 'enabled')  users = users.filter(u => u.enabled);
+  if (filter === 'disabled') users = users.filter(u => !u.enabled);
+  if (q) users = users.filter(u =>
+    u.username.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+  );
+
+  document.getElementById('user-count').textContent = `${users.length} user${users.length !== 1 ? 's' : ''}`;
+
+  document.getElementById('users-tbody').innerHTML = users.map(u => `
+    <tr>
+      <td>
+        <span class="mono">${esc(u.username)}</span>
+        ${u.notes ? `<span style="font-size:0.65rem;color:var(--text3);margin-left:0.4rem" title="${esc(u.notes)}">📝</span>` : ''}
+      </td>
+      <td class="muted small">${esc(u.email)}</td>
+      <td><span class="badge ${u.enabled ? 'badge-on' : 'badge-off'}">${u.enabled ? 'Active' : 'Disabled'}</span></td>
+      <td class="muted small">${fmtDate(u.created_at)}</td>
+      <td class="muted small">${u.last_login ? fmtDate(u.last_login) : '—'}</td>
+      <td>
+        <div class="action-row">
+          <button class="btn btn-ghost btn-xs" onclick="openDetail('${u.id}')">Manage</button>
+          <button class="btn btn-xs ${u.enabled ? 'btn-danger' : 'btn-success'}"
+                  onclick="quickToggle('${u.id}','${esc(u.username)}',${u.enabled})">
+            ${u.enabled ? 'Disable' : 'Enable'}
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('') || `<tr><td colspan="6" class="empty">No users match</td></tr>`;
+}
+
+async function quickToggle(id, username, enabled) {
+  if (!confirm(`${enabled ? 'Disable' : 'Enable'} account "${username}"?`)) return;
+  try {
+    const { ok, data } = await api('PUT', `/admin/users/${id}/toggle`);
+    toast(data.message, ok ? 'ok' : 'err');
+    if (ok) { loadUsers(); loadDashboard(); }
+  } catch(e) { toast('Request failed', 'err'); }
+}
+
+// ── USER DETAIL ───────────────────────────────────────────────────────────────
+function openDetail(id) {
+  detailUser = allUsers.find(u => u.id === id);
+  if (!detailUser) return;
+  populateDetail(detailUser);
+  navTo('user-detail');
+}
+
+function populateDetail(u) {
+  document.getElementById('detail-username-bc').textContent = u.username;
+  document.getElementById('d-username').textContent = u.username;
+  document.getElementById('d-id').textContent = u.id;
+  document.getElementById('d-created').textContent = fmtDate(u.created_at);
+  document.getElementById('d-lastlogin').textContent = u.last_login ? fmtDate(u.last_login) : 'Never';
+  document.getElementById('d-email-display').textContent = u.email;
+  document.getElementById('d-email-input').value = u.email;
+  document.getElementById('d-notes').value = u.notes || '';
+  document.getElementById('d-newpass').value = '';
+  document.getElementById('d-confpass').value = '';
+
+  document.getElementById('d-status').innerHTML =
+    `<span class="badge ${u.enabled ? 'badge-on' : 'badge-off'}">${u.enabled ? 'Active' : 'Disabled'}</span>`;
+
+  const btn = document.getElementById('d-toggle-btn');
+  if (u.enabled) {
+    btn.textContent = 'Disable Account';
+    btn.className = 'btn btn-danger btn-sm';
+  } else {
+    btn.textContent = 'Enable Account';
+    btn.className = 'btn btn-success btn-sm';
+  }
+}
+
+async function detailToggle() {
+  if (!detailUser) return;
+  const action = detailUser.enabled ? 'Disable' : 'Enable';
+  if (!confirm(`${action} account "${detailUser.username}"?`)) return;
+  try {
+    const { ok, data } = await api('PUT', `/admin/users/${detailUser.id}/toggle`);
+    toast(data.message, ok ? 'ok' : 'err');
+    if (ok) {
+      detailUser.enabled = !detailUser.enabled;
+      // Update in allUsers array too
+      const idx = allUsers.findIndex(u => u.id === detailUser.id);
+      if (idx >= 0) allUsers[idx].enabled = detailUser.enabled;
+      populateDetail(detailUser);
+      loadDashboard();
+    }
+  } catch(e) { toast('Request failed', 'err'); }
+}
+
+async function detailDelete() {
+  if (!detailUser) return;
+  if (!confirm(`Permanently delete "${detailUser.username}"? This cannot be undone.`)) return;
+  try {
+    const { ok, data } = await api('DELETE', `/admin/users/${detailUser.id}`);
+    toast(data.message, ok ? 'ok' : 'err');
+    if (ok) {
+      allUsers = allUsers.filter(u => u.id !== detailUser.id);
+      detailUser = null;
+      navTo('users');
+      loadDashboard();
+    }
+  } catch(e) { toast('Request failed', 'err'); }
+}
+
+async function saveEmail() {
+  if (!detailUser) return;
+  const email = document.getElementById('d-email-input').value.trim();
+  if (!email) { toast('Email cannot be empty', 'err'); return; }
+  try {
+    const { ok, data } = await api('PUT', `/admin/users/${detailUser.id}/email`, { email });
+    toast(data.message || data.detail, ok ? 'ok' : 'err');
+    if (ok) {
+      detailUser.email = email;
+      const idx = allUsers.findIndex(u => u.id === detailUser.id);
+      if (idx >= 0) allUsers[idx].email = email;
+      document.getElementById('d-email-display').textContent = email;
+    }
+  } catch(e) { toast('Request failed', 'err'); }
+}
+
+async function savePassword() {
+  if (!detailUser) return;
+  const password = document.getElementById('d-newpass').value;
+  const confirm  = document.getElementById('d-confpass').value;
+  if (!password) { toast('Password cannot be empty', 'err'); return; }
+  if (password.length < 8) { toast('Password must be at least 8 characters', 'err'); return; }
+  if (password !== confirm) { toast('Passwords do not match', 'err'); return; }
+  try {
+    const { ok, data } = await api('PUT', `/admin/users/${detailUser.id}/password`,
+      { password, confirm_password: confirm });
+    toast(data.message || data.detail, ok ? 'ok' : 'err');
+    if (ok) {
+      document.getElementById('d-newpass').value = '';
+      document.getElementById('d-confpass').value = '';
+    }
+  } catch(e) { toast('Request failed', 'err'); }
+}
+
+async function saveNotes() {
+  if (!detailUser) return;
+  const notes = document.getElementById('d-notes').value;
+  try {
+    const { ok, data } = await api('PUT', `/admin/users/${detailUser.id}/notes`, { notes });
+    toast(data.message, ok ? 'ok' : 'err');
+    if (ok) {
+      detailUser.notes = notes;
+      const idx = allUsers.findIndex(u => u.id === detailUser.id);
+      if (idx >= 0) allUsers[idx].notes = notes;
+    }
+  } catch(e) { toast('Request failed', 'err'); }
+}
+
+// ── AUDIT LOG ─────────────────────────────────────────────────────────────────
+async function loadAudit() {
+  try {
+    const { data } = await api('GET', '/admin/audit?limit=200');
+    const list = document.getElementById('audit-list');
+    list.innerHTML = data.map(e => {
+      const cls = {
+        register: 'ap-register',
+        admin_login: 'ap-admin_login',
+        admin_delete: 'ap-admin_delete',
+        admin_enabled: 'ap-admin_enabled',
+        admin_disabled: 'ap-admin_disabled',
+        admin_password_change: 'ap-admin_password_change',
+        admin_email_change: 'ap-admin_email_change',
+        manual_sync: 'ap-manual_sync',
+      }[e.action] || 'ap-default';
+      return `
+        <div class="audit-item">
+          <div class="muted small">${fmtDate(e.created_at)}</div>
+          <div class="mono small">${esc(e.username || '—')}</div>
+          <div><span class="action-pill ${cls}">${esc(e.action)}</span></div>
+          <div class="muted small">${esc(e.detail || '—')}</div>
+          <div class="mono small muted">${esc(e.ip_address || '—')}</div>
+        </div>
+      `;
+    }).join('') || '<div class="empty">No audit entries</div>';
+  } catch(e) { toast('Failed to load audit log', 'err'); }
+}
+
+// ── SYNC ─────────────────────────────────────────────────────────────────────
+async function doSync() {
+  const btn = document.getElementById('nav-sync');
+  btn.innerHTML = '<span class="nav-icon"><span class="spin" style="width:10px;height:10px"></span></span> Syncing…';
+  try {
+    const { ok, data } = await api('POST', '/admin/sync');
+    toast(`${data.message} — ${data.users_written} users`, ok ? 'ok' : 'err');
+  } catch(e) { toast('Sync failed', 'err'); }
+  finally { btn.innerHTML = '<span class="nav-icon">↻</span> Sync passwd'; }
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function fmtDate(s) {
+  if (!s) return '—';
+  const d = new Date(s);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimer;
+function toast(msg, type = 'info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// Restore session
+if (tok) {
+  document.getElementById('admin-login').style.display = 'none';
+}
+</script>
+</body>
+</html>
