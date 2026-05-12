@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CIOS FTP Portal</title>
+<title>CIOS FTP Server User Portal</title>
+<link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<script src="/static/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
@@ -20,6 +23,7 @@
   --red:      #ef4444;
   --yellow:   #f59e0b;
   --purple:   #8b5cf6;
+  --teal:     #14b8a6;
   --text:     #e2e8f0;
   --text2:    #94a3b8;
   --text3:    #64748b;
@@ -31,981 +35,558 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.5; }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* ── PAGES ── */
-.page { display: none; min-height: 100vh; }
+.page { display: none; }
 .page.active { display: flex; }
 
-/* ══════════════════════════════════════════════
-   REGISTER PAGE
-══════════════════════════════════════════════ */
+/* ── Register ── */
 #page-register {
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-  background:
-    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(59,130,246,0.07) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 60% at 80% 80%, rgba(139,92,246,0.05) 0%, transparent 70%),
-    var(--bg);
+  flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1rem;
+  background: radial-gradient(ellipse 60% 40% at 20% 20%, rgba(59,130,246,0.07) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 60% at 80% 80%, rgba(139,92,246,0.05) 0%, transparent 70%),
+              var(--bg);
 }
-
 .reg-container { width: 100%; max-width: 460px; }
-
-.reg-brand {
-  text-align: center;
-  margin-bottom: 2.5rem;
-}
-
-.reg-brand .logo-mark {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.reg-brand .logo-icon {
-  width: 36px; height: 36px;
-  background: linear-gradient(135deg, var(--accent), var(--purple));
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.reg-brand h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.reg-brand p {
-  color: var(--text2);
-  font-size: 0.85rem;
-  margin-top: 0.4rem;
-}
-
-.card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1.75rem;
-}
-
-.access-info {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem 1.1rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.8rem;
-  color: var(--text2);
-}
-
-.access-info .access-title {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  margin-bottom: 0.6rem;
-}
-
+.reg-brand { text-align: center; margin-bottom: 2.5rem; }
+.reg-brand .logo-mark { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+.reg-brand .logo-icon { width: 36px; height: 36px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.reg-brand h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; }
+.reg-brand p  { color: var(--text2); font-size: 0.85rem; margin-top: 0.4rem; }
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1.75rem; }
+.access-info { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.1rem; margin-bottom: 1.5rem; font-size: 0.8rem; color: var(--text2); }
+.access-info .access-title { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.6rem; }
 .access-info ul { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
 .access-info li::before { content: "▸ "; color: var(--accent); font-size: 0.7rem; }
-
 .field { margin-bottom: 1.1rem; }
-
-.field label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--text2);
-  margin-bottom: 0.4rem;
-}
-
-.field input {
-  width: 100%;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 0.85rem;
-  padding: 0.6rem 0.85rem;
-  border-radius: var(--radius);
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.field input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
-}
-
+.field label { display: block; font-size: 0.75rem; font-weight: 500; color: var(--text2); margin-bottom: 0.4rem; }
+.field input { width: 100%; background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-family: var(--mono); font-size: 0.85rem; padding: 0.6rem 0.85rem; border-radius: var(--radius); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+.field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
 .field input.err { border-color: var(--red); }
-.field-err { font-size: 0.72rem; color: var(--red); margin-top: 0.3rem; display: none; }
+.field-err  { font-size: 0.72rem; color: var(--red);   margin-top: 0.3rem; display: none; }
 .field-hint { font-size: 0.72rem; color: var(--text3); margin-top: 0.3rem; }
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.6rem 1.1rem;
-  border: none;
-  border-radius: var(--radius);
-  font-family: var(--sans);
-  font-size: 0.83rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.6rem 1.1rem; border: none; border-radius: var(--radius); font-family: var(--sans); font-size: 0.83rem; font-weight: 500; cursor: pointer; transition: all 0.15s; text-decoration: none; white-space: nowrap; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-primary  { background: var(--accent); color: #fff; width: 100%; }
 .btn-primary:hover:not(:disabled) { background: var(--accent-h); }
 .btn-ghost    { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
 .btn-ghost:hover:not(:disabled) { border-color: var(--text2); color: var(--text); }
 .btn-danger   { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: var(--red); }
-.btn-danger:hover:not(:disabled) { background: rgba(239,68,68,0.2); }
+.btn-danger:hover:not(:disabled)  { background: rgba(239,68,68,0.2); }
 .btn-success  { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: var(--green); }
 .btn-success:hover:not(:disabled) { background: rgba(16,185,129,0.2); }
 .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.75rem; }
 .btn-xs { padding: 0.25rem 0.55rem; font-size: 0.7rem; }
+.alert { padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 0.83rem; margin-bottom: 1rem; display: none; line-height: 1.5; }
+.alert.ok   { background: rgba(16,185,129,0.1);  border: 1px solid rgba(16,185,129,0.3); color: var(--green); }
+.alert.err  { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.3);  color: var(--red); }
+.alert.info { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); color: var(--accent-h); }
+.reg-footer { text-align: center; margin-top: 1.5rem; font-size: 0.78rem; color: var(--text3); }
+.reg-footer a { color: var(--accent); cursor: pointer; text-decoration: none; }
 
-.alert {
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  font-size: 0.83rem;
-  margin-bottom: 1rem;
-  display: none;
-  line-height: 1.5;
-}
-.alert.ok  { background: rgba(16,185,129,0.1);  border: 1px solid rgba(16,185,129,0.3); color: var(--green); }
-.alert.err { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.3);  color: var(--red); }
-.alert.info{ background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); color: var(--accent-h); }
-
-.reg-footer {
-  text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.78rem;
-  color: var(--text3);
-}
-
-.reg-footer a {
-  color: var(--accent);
-  cursor: pointer;
-  text-decoration: none;
-}
-
-/* ══════════════════════════════════════════════
-   ADMIN PAGE
-══════════════════════════════════════════════ */
-#page-admin { flex-direction: column; }
-
-/* Login overlay */
-#admin-login {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background: var(--bg);
-}
-
+/* ── Admin shell ── */
+#page-register { min-height: 100vh; }
+#page-admin { position: fixed; inset: 0; flex-direction: column; width: 100%; height: 100%; }
+#admin-login { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; background: var(--bg); }
 #admin-login .card { width: 100%; max-width: 340px; }
-#admin-login h2 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+#admin-login h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+#admin-app { display: none; position: absolute; inset: 0; overflow: hidden; }
+.shell { display: flex; height: 100%; overflow: hidden; }
 
-/* App shell */
-#admin-app { display: none; flex: 1; overflow: hidden; }
-
-.shell {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* Sidebar */
-.sidebar {
-  width: var(--sidebar);
-  background: var(--bg2);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  overflow-y: auto;
-}
-
-.sidebar-brand {
-  padding: 1.25rem 1rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.sidebar-brand .logo-icon {
-  width: 28px; height: 28px;
-  background: linear-gradient(135deg, var(--accent), var(--purple));
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: #fff;
-  flex-shrink: 0;
-}
-
-.sidebar-brand span {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.sidebar-brand small {
-  display: block;
-  font-size: 0.65rem;
-  color: var(--text3);
-  font-weight: 400;
-}
-
-.nav-section {
-  padding: 1rem 0.6rem 0.5rem;
-}
-
-.nav-label {
-  font-size: 0.62rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  padding: 0 0.5rem;
-  margin-bottom: 0.3rem;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--radius);
-  color: var(--text2);
-  font-size: 0.82rem;
-  cursor: pointer;
-  transition: all 0.12s;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-}
-
+.sidebar { width: var(--sidebar); background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; }
+.sidebar-brand { padding: 1.25rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.6rem; }
+.sidebar-brand .logo-icon { width: 28px; height: 28px; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sidebar-brand span  { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+.sidebar-brand small { display: block; font-size: 0.65rem; color: var(--text3); font-weight: 400; }
+.nav-section { padding: 1rem 0.6rem 0.5rem; }
+.nav-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); padding: 0 0.5rem; margin-bottom: 0.3rem; }
+.nav-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.75rem; border-radius: var(--radius); color: var(--text2); font-size: 0.82rem; cursor: pointer; transition: all 0.12s; border: none; background: none; width: 100%; text-align: left; }
 .nav-item:hover { background: var(--bg3); color: var(--text); }
 .nav-item.active { background: rgba(59,130,246,0.12); color: var(--accent-h); }
 .nav-item .nav-icon { font-size: 0.9rem; width: 16px; text-align: center; flex-shrink: 0; }
+.sidebar-footer { margin-top: auto; padding: 1rem 0.6rem; border-top: 1px solid var(--border); }
 
-.sidebar-footer {
-  margin-top: auto;
-  padding: 1rem 0.6rem;
-  border-top: 1px solid var(--border);
-}
-
-/* Main content */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: var(--bg);
-}
-
-.topbar {
-  height: 52px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 1.5rem;
-  gap: 1rem;
-  background: var(--bg2);
-  flex-shrink: 0;
-}
-
-.topbar-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  flex: 1;
-}
-
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+.topbar { height: 52px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.5rem; gap: 1rem; background: var(--bg2); flex-shrink: 0; }
+.topbar-title { font-size: 0.9rem; font-weight: 600; flex: 1; }
 .topbar-actions { display: flex; gap: 0.5rem; align-items: center; }
+.content { flex: 1; overflow-y: auto; padding: 1.5rem; }
 
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1.5rem;
-}
-
-/* ── PANELS ── */
 .panel { display: none; }
 .panel.active { display: block; }
 
-/* Stats row */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.stat-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.1rem 1.25rem;
-}
-
-.stat-card .stat-label {
-  font-size: 0.72rem;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.4rem;
-}
-
-.stat-card .stat-val {
-  font-family: var(--mono);
-  font-size: 1.8rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.stat-card .stat-sub {
-  font-size: 0.72rem;
-  color: var(--text3);
-  margin-top: 0.3rem;
-}
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.25rem; }
+.stat-card .stat-label { font-size: 0.72rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+.stat-card .stat-val   { font-family: var(--mono); font-size: 1.8rem; font-weight: 700; line-height: 1; }
+.stat-card .stat-sub   { font-size: 0.72rem; color: var(--text3); margin-top: 0.3rem; }
+.stat-card .stat-trend { font-size: 0.72rem; margin-top: 0.3rem; }
+.trend-up   { color: var(--green); }
+.trend-down { color: var(--red); }
+.trend-flat { color: var(--text3); }
 
 /* Table */
-.table-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.table-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-}
-
-.search-box {
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  font-size: 0.82rem;
-  padding: 0.45rem 0.75rem;
-  border-radius: var(--radius);
-  outline: none;
-  width: 220px;
-  transition: border-color 0.15s;
-}
-
+.table-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.table-toolbar { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.search-box { background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-size: 0.82rem; padding: 0.45rem 0.75rem; border-radius: var(--radius); outline: none; width: 200px; transition: border-color 0.15s; }
 .search-box:focus { border-color: var(--accent); }
-
-.filter-select {
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  color: var(--text2);
-  font-size: 0.78rem;
-  padding: 0.45rem 0.6rem;
-  border-radius: var(--radius);
-  outline: none;
-}
-
+.filter-select { background: var(--bg3); border: 1px solid var(--border2); color: var(--text2); font-size: 0.78rem; padding: 0.45rem 0.6rem; border-radius: var(--radius); outline: none; }
 .table-wrap { overflow-x: auto; }
-
 table { width: 100%; border-collapse: collapse; }
-
-thead th {
-  padding: 0.6rem 1rem;
-  text-align: left;
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text3);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-  font-weight: 500;
-}
-
-tbody td {
-  padding: 0.7rem 1rem;
-  border-bottom: 1px solid var(--border);
-  vertical-align: middle;
-}
-
+thead th { padding: 0.6rem 1rem; text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); border-bottom: 1px solid var(--border); white-space: nowrap; font-weight: 500; }
+tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
 tbody tr:last-child td { border-bottom: none; }
 tbody tr:hover td { background: var(--bg3); }
-
-.mono { font-family: var(--mono); font-size: 0.8rem; }
+.mono  { font-family: var(--mono); font-size: 0.8rem; }
 .muted { color: var(--text2); }
 .small { font-size: 0.75rem; }
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.2rem 0.55rem;
-  border-radius: 20px;
-  font-size: 0.68rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
+.badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.55rem; border-radius: 20px; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
-.badge-on  { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
-.badge-on::before { background: var(--green); }
-.badge-off { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+.badge-on::before  { background: var(--green); }
 .badge-off::before { background: var(--red); }
-
+.badge-on  { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+.badge-off { background: rgba(239,68,68,0.1);  color: var(--red);   border: 1px solid rgba(239,68,68,0.25); }
 .action-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.empty { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 0.85rem; }
 
-/* Empty state */
-.empty {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--text3);
-  font-size: 0.85rem;
-}
-
-/* ── USER DETAIL PANEL ── */
-.detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-@media (max-width: 680px) {
-  .detail-grid { grid-template-columns: 1fr; }
-}
-
-.detail-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-}
-
-.detail-card h3 {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.82rem;
-}
-
+/* Detail */
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media (max-width: 680px) { .detail-grid { grid-template-columns: 1fr; } }
+.detail-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+.detail-card h3 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.detail-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
 .detail-row:last-child { border-bottom: none; }
 .detail-row .dr-label { color: var(--text3); font-size: 0.75rem; }
-.detail-row .dr-val { font-family: var(--mono); font-size: 0.78rem; text-align: right; }
-
-.inline-edit {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.inline-input {
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  padding: 0.3rem 0.6rem;
-  border-radius: 4px;
-  outline: none;
-  flex: 1;
-  min-width: 0;
-}
-
+.detail-row .dr-val   { font-family: var(--mono); font-size: 0.78rem; text-align: right; }
+.inline-edit { display: flex; gap: 0.5rem; align-items: center; }
+.inline-input { background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-family: var(--mono); font-size: 0.78rem; padding: 0.3rem 0.6rem; border-radius: 4px; outline: none; flex: 1; min-width: 0; }
 .inline-input:focus { border-color: var(--accent); }
 
-/* Audit log */
+/* Audit */
 .audit-list { display: flex; flex-direction: column; }
-
-.audit-item {
-  display: grid;
-  grid-template-columns: 150px 110px 150px 1fr 100px;
-  gap: 0.75rem;
-  padding: 0.65rem 1rem;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.78rem;
-  align-items: center;
-}
-
+.audit-item { display: grid; grid-template-columns: 150px 110px 150px 1fr 100px; gap: 0.75rem; padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.78rem; align-items: center; }
 .audit-item:last-child { border-bottom: none; }
 .audit-item:hover { background: var(--bg3); }
+.audit-head { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 150px 110px 150px 1fr 100px; gap: 0.75rem; }
+.action-pill { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; }
+.ap-register { background: rgba(16,185,129,0.1); color: var(--green); }
+.ap-admin_login { background: rgba(59,130,246,0.1); color: var(--accent); }
+.ap-admin_delete { background: rgba(239,68,68,0.1); color: var(--red); }
+.ap-admin_enabled { background: rgba(16,185,129,0.1); color: var(--green); }
+.ap-admin_disabled { background: rgba(239,68,68,0.1); color: var(--red); }
+.ap-admin_password_change { background: rgba(245,158,11,0.1); color: var(--yellow); }
+.ap-admin_email_change { background: rgba(139,92,246,0.1); color: var(--purple); }
+.ap-manual_sync { background: rgba(59,130,246,0.1); color: var(--accent); }
+.ap-default { background: var(--bg4); color: var(--text3); }
 
-.audit-head {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text3);
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid var(--border);
-  display: grid;
-  grid-template-columns: 150px 110px 150px 1fr 100px;
-  gap: 0.75rem;
-}
+/* Charts & logs */
+.chart-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+.chart-card h3 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; }
+.chart-wrap { position: relative; height: 220px; }
 
-.action-pill {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 600;
-}
+.range-tabs { display: flex; gap: 0.3rem; }
+.range-tab { padding: 0.2rem 0.55rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border2); background: transparent; color: var(--text3); transition: all 0.12s; }
+.range-tab.active { background: rgba(59,130,246,0.15); border-color: var(--accent); color: var(--accent-h); }
+.range-tab:hover:not(.active) { border-color: var(--text3); color: var(--text2); }
 
-.ap-register        { background: rgba(59,130,246,0.15); color: #93c5fd; }
-.ap-admin_login     { background: rgba(139,92,246,0.15); color: #c4b5fd; }
-.ap-admin_delete    { background: rgba(239,68,68,0.15);  color: #fca5a5; }
-.ap-admin_enabled   { background: rgba(16,185,129,0.15); color: #6ee7b7; }
-.ap-admin_disabled  { background: rgba(245,158,11,0.15); color: #fcd34d; }
-.ap-admin_password_change { background: rgba(245,158,11,0.15); color: #fcd34d; }
-.ap-admin_email_change    { background: rgba(59,130,246,0.15);  color: #93c5fd; }
-.ap-manual_sync     { background: rgba(16,185,129,0.15); color: #6ee7b7; }
-.ap-default         { background: var(--bg3); color: var(--text3); }
+.log-filter-bar { display: flex; flex-wrap: wrap; gap: 0.6rem; padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); }
+.log-filter-bar input, .log-filter-bar select { background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-size: 0.78rem; padding: 0.4rem 0.65rem; border-radius: var(--radius); outline: none; }
+.log-filter-bar input:focus, .log-filter-bar select:focus { border-color: var(--accent); }
+.log-filter-bar input[type="date"] { color-scheme: dark; }
+.log-filter-bar label { font-size: 0.72rem; color: var(--text3); align-self: center; }
 
-/* Breadcrumb */
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.78rem;
-  color: var(--text3);
-  margin-bottom: 1.25rem;
-}
+.log-pager { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-top: 1px solid var(--border); font-size: 0.78rem; color: var(--text3); }
+.pager-btns { display: flex; gap: 0.4rem; }
 
-.breadcrumb a { color: var(--accent); cursor: pointer; text-decoration: none; }
-.breadcrumb a:hover { text-decoration: underline; }
-.breadcrumb span { color: var(--text3); }
+.top-list { list-style: none; }
+.top-list li { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+.top-list li:last-child { border-bottom: none; }
+.top-list .top-name  { font-family: var(--mono); font-size: 0.75rem; color: var(--text2); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 0.5rem; }
+.top-list .top-count { font-family: var(--mono); color: var(--accent); flex-shrink: 0; }
 
-/* Modal */
-.modal-bg {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+@media (max-width: 900px) { .three-col { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .two-col, .three-col { grid-template-columns: 1fr; } }
 
-.modal-bg.open { display: flex; }
-
-.modal {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 400px;
-}
-
-.modal h3 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 1.25rem;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 0.6rem;
-  justify-content: flex-end;
-  margin-top: 1.25rem;
-}
-
-textarea.inline-input {
-  resize: vertical;
-  min-height: 80px;
-  width: 100%;
-  padding: 0.5rem 0.7rem;
-}
-
-/* Spinner */
-.spin {
-  display: inline-block;
-  width: 12px; height: 12px;
-  border: 2px solid rgba(255,255,255,0.2);
-  border-top-color: currentColor;
-  border-radius: 50%;
-  animation: spin 0.5s linear infinite;
-}
+.filepath-cell { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.filepath-cell:hover { white-space: normal; word-break: break-all; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+.spin { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
 
-/* Toast */
-#toast {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 0.75rem 1.1rem;
-  font-size: 0.82rem;
-  z-index: 300;
-  display: none;
-  align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  max-width: 320px;
-}
-
-#toast.show { display: flex; }
-#toast.ok   { border-left: 3px solid var(--green); }
-#toast.err  { border-left: 3px solid var(--red); }
-#toast.info { border-left: 3px solid var(--accent); }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+#toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; padding: 0.65rem 1.1rem; border-radius: var(--radius); font-size: 0.82rem; font-weight: 500; opacity: 0; transform: translateY(6px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; max-width: 340px; }
+#toast.show { opacity: 1; transform: translateY(0); }
+#toast.ok   { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); color: var(--green); }
+#toast.err  { background: rgba(239,68,68,0.15);  border: 1px solid rgba(239,68,68,0.4);  color: var(--red); }
+#toast.info { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.4); color: var(--accent-h); }
 </style>
 </head>
 <body>
+<div id="toast"></div>
 
-<!-- ══════════════════════════════════════════════
-     REGISTER PAGE
-══════════════════════════════════════════════ -->
+<!-- ══ REGISTER ══ -->
 <div id="page-register" class="page active">
   <div class="reg-container">
     <div class="reg-brand">
-      <div class="logo-mark">
-        <div class="logo-icon">FTP</div>
-      </div>
-      <h1>CIOS File Portal</h1>
-      <p>Create an account to access the FTP server</p>
+      <div class="logo-mark"><div class="logo-icon"><img src="/static/favicon.png" width="36" height="36" alt="CIOS"></div><div><h1>CIOS FTP Portal</h1></div></div>
+      <p>Create an account to access the CIOS FTP server</p>
     </div>
-
     <div class="card">
-      <div id="reg-alert" class="alert"></div>
-
       <div class="access-info">
-        <div class="access-title">What you get</div>
+        <div class="access-title">Connection Details</div>
         <ul>
-          <li>Browse &amp; download the full file archive</li>
-          <li>Upload files to <code style="color:var(--accent);font-family:var(--mono)">/upload</code> only</li>
-          <li>Cannot delete or rename existing files</li>
+          <li>Host: cios.dhitechnical.com</li>
+          <li>Port: 21 (Explicit TLS required)</li>
+          <li>Use any FTP client that supports FTPS</li>
         </ul>
       </div>
-
-      <div class="field">
-        <label>Username</label>
-        <input type="text" id="r-user" placeholder="your_username" autocomplete="username">
-        <div class="field-hint">3–32 chars · letters, numbers, underscores</div>
-        <div class="field-err" id="re-user"></div>
-      </div>
-      <div class="field">
-        <label>Email address</label>
-        <input type="email" id="r-email" placeholder="you@example.com" autocomplete="email">
-        <div class="field-err" id="re-email"></div>
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" id="r-pass" placeholder="Minimum 8 characters" autocomplete="new-password">
-        <div class="field-err" id="re-pass"></div>
-      </div>
-      <div class="field">
-        <label>Confirm password</label>
-        <input type="password" id="r-conf" placeholder="Repeat password" autocomplete="new-password">
-        <div class="field-err" id="re-conf"></div>
-      </div>
-
+      <div id="reg-alert" class="alert"></div>
+      <div class="field"><label>Username</label><input type="text" id="r-user" autocomplete="username" placeholder="3–32 chars, letters/numbers/_"><div class="field-err" id="err-user"></div></div>
+      <div class="field"><label>Email Address</label><input type="email" id="r-email" autocomplete="email" placeholder="you@example.com"><div class="field-err" id="err-email"></div></div>
+      <div class="field"><label>Password</label><input type="password" id="r-pass" autocomplete="new-password" placeholder="Minimum 8 characters"><div class="field-err" id="err-pass"></div></div>
+      <div class="field"><label>Confirm Password</label><input type="password" id="r-pass2" autocomplete="new-password" placeholder="Repeat password"><div class="field-err" id="err-pass2"></div></div>
       <button class="btn btn-primary" id="reg-btn" onclick="doRegister()">Create Account</button>
     </div>
-
-    <div class="reg-footer">
-      Admin? <a onclick="showPage('admin')">Sign in here</a>
-      &nbsp;·&nbsp;
-      Server: <span style="font-family:var(--mono);color:var(--accent)">cios.dhitechnical.com:21</span>
-    </div>
+    <div class="reg-footer">Admin? <a onclick="showPage('admin')">Sign in here</a></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     ADMIN PAGE
-══════════════════════════════════════════════ -->
+<!-- ══ ADMIN ══ -->
 <div id="page-admin" class="page">
-
-  <!-- Login -->
   <div id="admin-login">
     <div class="card">
-      <h2>⚙ Admin Portal</h2>
-      <div id="al-alert" class="alert"></div>
-      <div class="field">
-        <label>Username</label>
-        <input type="text" id="al-user" autocomplete="username">
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" id="al-pass" autocomplete="current-password"
-               onkeydown="if(event.key==='Enter')doAdminLogin()">
-      </div>
-      <button class="btn btn-primary" onclick="doAdminLogin()">Sign In</button>
-      <div style="margin-top:1rem;text-align:center">
-        <a style="font-size:0.78rem;color:var(--text3);cursor:pointer" onclick="showPage('register')">← Back to registration</a>
-      </div>
+      <h2>🔐 Admin Login</h2>
+      <div id="login-alert" class="alert"></div>
+      <div class="field"><label>Username</label><input type="text" id="l-user" autocomplete="username"></div>
+      <div class="field"><label>Password</label><input type="password" id="l-pass" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
     </div>
   </div>
 
-  <!-- App Shell -->
   <div id="admin-app">
     <div class="shell">
-
-      <!-- Sidebar -->
-      <aside class="sidebar">
+      <nav class="sidebar">
         <div class="sidebar-brand">
-          <div class="logo-icon">FTP</div>
-          <div>
-            <span>CIOS Admin</span>
-            <small>FTP Management</small>
-          </div>
+          <div class="logo-icon"><img src="/static/favicon.png" width="28" height="28" alt="CIOS"></div>
+          <div><span>CIOS Admin</span><small>FTP User Manager</small></div>
         </div>
-
         <div class="nav-section">
           <div class="nav-label">Overview</div>
-          <button class="nav-item active" onclick="navTo('dashboard')" id="nav-dashboard">
-            <span class="nav-icon">◈</span> Dashboard
-          </button>
+          <button class="nav-item active" id="nav-dashboard" onclick="navTo('dashboard')"><span class="nav-icon">◈</span> Dashboard</button>
         </div>
-
         <div class="nav-section">
-          <div class="nav-label">Users</div>
-          <button class="nav-item" onclick="navTo('users')" id="nav-users">
-            <span class="nav-icon">◉</span> All Users
-          </button>
-          <button class="nav-item" onclick="navTo('audit')" id="nav-audit">
-            <span class="nav-icon">◎</span> Audit Log
-          </button>
+          <div class="nav-label">User Accounts</div>
+          <button class="nav-item" id="nav-users" onclick="navTo('users')"><span class="nav-icon">◎</span> All Users</button>
+          <button class="nav-item" id="nav-audit" onclick="navTo('audit')"><span class="nav-icon">≡</span> Audit Log</button>
         </div>
-
+        <div class="nav-section">
+          <div class="nav-label">Download Activity</div>
+          <button class="nav-item" id="nav-user-dl" onclick="navTo('user-dl')"><span class="nav-icon">↓</span> User Downloads</button>
+          <button class="nav-item" id="nav-anon-dl" onclick="navTo('anon-dl')"><span class="nav-icon">◌</span> Anon Downloads</button>
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">Statistics</div>
+          <button class="nav-item" id="nav-stats" onclick="navTo('stats')"><span class="nav-icon">▲</span> Charts &amp; Stats</button>
+        </div>
         <div class="nav-section">
           <div class="nav-label">System</div>
-          <button class="nav-item" onclick="doSync()" id="nav-sync">
-            <span class="nav-icon">↻</span> Sync passwd
-          </button>
+          <button class="nav-item" id="nav-settings" onclick="navTo('settings')"><span class="nav-icon">⚙</span> Settings</button>
         </div>
-
         <div class="sidebar-footer">
-          <button class="nav-item" onclick="doLogout()">
-            <span class="nav-icon">⇤</span> Logout
-          </button>
+          <button class="nav-item" id="nav-sync" onclick="doSync()"><span class="nav-icon">↻</span> Sync passwd</button>
+          <button class="nav-item" onclick="doLogout()" style="color:var(--red)"><span class="nav-icon">⏻</span> Sign Out</button>
         </div>
-      </aside>
+      </nav>
 
-      <!-- Main -->
       <div class="main">
         <div class="topbar">
           <div class="topbar-title" id="topbar-title">Dashboard</div>
           <div class="topbar-actions" id="topbar-actions"></div>
         </div>
-
         <div class="content">
 
-          <!-- DASHBOARD -->
-          <div id="panel-dashboard" class="panel active">
-            <div class="stats-row" id="stats-row">
-              <div class="stat-card">
-                <div class="stat-label">Total Users</div>
-                <div class="stat-val" id="s-total" style="color:var(--accent)">—</div>
-                <div class="stat-sub">registered accounts</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-label">Active</div>
-                <div class="stat-val" id="s-enabled" style="color:var(--green)">—</div>
-                <div class="stat-sub">can log in now</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-label">Disabled</div>
-                <div class="stat-val" id="s-disabled" style="color:var(--red)">—</div>
-                <div class="stat-sub">blocked from FTP</div>
-              </div>
+          <!-- ── Dashboard ── -->
+          <div class="panel active" id="panel-dashboard">
+            <div class="stats-row">
+              <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-val" id="s-total">—</div></div>
+              <div class="stat-card"><div class="stat-label">Active</div><div class="stat-val" style="color:var(--green)" id="s-enabled">—</div></div>
+              <div class="stat-card"><div class="stat-label">Disabled</div><div class="stat-val" style="color:var(--red)" id="s-disabled">—</div></div>
             </div>
-
             <div class="table-card">
-              <div class="table-toolbar">
-                <span style="font-size:0.8rem;font-weight:500">Recent Registrations</span>
-                <button class="btn btn-ghost btn-sm" onclick="navTo('users')" style="margin-left:auto">View all →</button>
-              </div>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Username</th><th>Email</th><th>Status</th><th>Registered</th><th></th>
-                    </tr>
-                  </thead>
-                  <tbody id="recent-tbody"></tbody>
-                </table>
-              </div>
+              <div class="table-toolbar"><span style="font-size:0.78rem;color:var(--text3)">Recent Registrations</span></div>
+              <div class="table-wrap"><table><thead><tr><th>Username</th><th>Email</th><th>Status</th><th>Registered</th><th></th></tr></thead><tbody id="recent-tbody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table></div>
             </div>
           </div>
 
-          <!-- USERS LIST -->
-          <div id="panel-users" class="panel">
+          <!-- ── All Users ── -->
+          <div class="panel" id="panel-users">
             <div class="table-card">
               <div class="table-toolbar">
-                <input class="search-box" type="text" placeholder="Search username or email…"
-                       id="user-search" oninput="renderUsers()">
+                <input class="search-box" id="user-search" placeholder="Search username or email…" oninput="renderUsers()">
                 <select class="filter-select" id="user-filter" onchange="renderUsers()">
-                  <option value="all">All status</option>
-                  <option value="enabled">Enabled only</option>
-                  <option value="disabled">Disabled only</option>
+                  <option value="all">All</option><option value="enabled">Active</option><option value="disabled">Disabled</option>
                 </select>
-                <span id="user-count" style="font-size:0.75rem;color:var(--text3);margin-left:auto"></span>
+                <span style="margin-left:auto;font-size:0.78rem;color:var(--text3)" id="user-count"></span>
+                <button class="btn btn-ghost btn-sm" onclick="showAddUserModal()">+ Add User</button>
               </div>
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Username</th>
-                      <th>Email</th>
-                      <th>Status</th>
-                      <th>Registered</th>
-                      <th>Last Login</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="users-tbody"></tbody>
-                </table>
-              </div>
+              <div class="table-wrap"><table><thead><tr><th>Username</th><th>Email</th><th>Status</th><th>Registered</th><th>Last Login</th><th>Actions</th></tr></thead><tbody id="users-tbody"></tbody></table></div>
             </div>
           </div>
 
-          <!-- USER DETAIL -->
-          <div id="panel-user-detail" class="panel">
-            <div class="breadcrumb">
-              <a onclick="navTo('users')">Users</a>
-              <span>›</span>
-              <span id="detail-username-bc">—</span>
+          <!-- ── User Detail ── -->
+          <div class="panel" id="panel-user-detail">
+            <div style="margin-bottom:1rem;font-size:0.78rem;color:var(--text3)">
+              <span style="cursor:pointer;color:var(--accent)" onclick="navTo('users')">← All Users</span>
+              <span style="margin:0 0.4rem">/</span><span id="detail-username-bc"></span>
+            </div>
+            <div class="detail-grid">
+              <div class="detail-card">
+                <h3>Account Info</h3>
+                <div class="detail-row"><span class="dr-label">Username</span><span class="dr-val mono" id="d-username"></span></div>
+                <div class="detail-row"><span class="dr-label">User ID</span><span class="dr-val mono" style="font-size:0.65rem;color:var(--text3)" id="d-id"></span></div>
+                <div class="detail-row"><span class="dr-label">Status</span><span id="d-status"></span></div>
+                <div class="detail-row"><span class="dr-label">Registered</span><span class="dr-val" id="d-created"></span></div>
+                <div class="detail-row"><span class="dr-label">Last Login</span><span class="dr-val" id="d-lastlogin"></span></div>
+                <div style="margin-top:1rem">
+                  <button class="btn btn-danger btn-sm" id="d-toggle-btn" onclick="detailToggle()">Disable Account</button>
+                  &nbsp;
+                  <button class="btn btn-sm" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:var(--red)" onclick="detailDelete()">Delete</button>
+                </div>
+              </div>
+              <div class="detail-card">
+                <h3>Email Address</h3>
+                <div class="detail-row"><span class="dr-label">Current</span><span class="dr-val" id="d-email-display"></span></div>
+                <div style="margin-top:0.75rem;display:flex;gap:0.5rem">
+                  <input class="inline-input" type="email" id="d-email-input" placeholder="New email">
+                  <button class="btn btn-ghost btn-sm" onclick="saveEmail()">Save</button>
+                </div>
+                <h3 style="margin-top:1.5rem">Reset Password</h3>
+                <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem">
+                  <input class="inline-input" type="password" id="d-newpass" placeholder="New password (min 8 chars)">
+                  <input class="inline-input" type="password" id="d-confpass" placeholder="Confirm new password">
+                  <button class="btn btn-ghost btn-sm" onclick="savePassword()">Update Password</button>
+                </div>
+              </div>
+            </div>
+            <div class="detail-card" style="margin-bottom:1rem">
+              <h3>Admin Notes</h3>
+              <textarea class="inline-input" id="d-notes" rows="3" style="width:100%;resize:vertical;height:80px;font-family:var(--sans)" placeholder="Internal notes about this user…"></textarea>
+              <button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" onclick="saveNotes()">Save Notes</button>
+            </div>
+          </div>
+
+          <!-- ── Audit Log ── -->
+          <div class="panel" id="panel-audit">
+            <div class="table-card">
+              <div class="audit-head"><span>Time</span><span>User</span><span>Action</span><span>Detail</span><span>IP</span></div>
+              <div class="audit-list" id="audit-list"><div class="empty">Loading…</div></div>
+            </div>
+          </div>
+
+          <!-- ── Settings ── -->
+          <div class="panel" id="panel-settings">
+            <!-- Tailer status -->
+            <div class="stats-row" id="settings-status-row">
+              <div class="stat-card"><div class="stat-label">Tailer Status</div><div class="stat-val" style="font-size:1rem" id="cfg-status">—</div></div>
+              <div class="stat-card"><div class="stat-label">Current Log File</div><div class="stat-val" style="font-size:0.9rem;font-family:var(--mono)" id="cfg-logfile">—</div></div>
+              <div class="stat-card"><div class="stat-label">Last Write</div><div class="stat-val" style="font-size:0.9rem" id="cfg-lastwrite">—</div></div>
+              <div class="stat-card"><div class="stat-label">Total Rows Ingested</div><div class="stat-val" id="cfg-rows">—</div></div>
             </div>
 
             <div class="detail-grid">
-
-              <!-- Account Info -->
+              <!-- Admin credentials -->
               <div class="detail-card">
-                <h3>👤 Account Info</h3>
-                <div class="detail-row">
-                  <span class="dr-label">Username</span>
-                  <span class="dr-val mono" id="d-username">—</span>
+                <h3>Admin Password</h3>
+                <div class="alert" id="pw-alert" style="margin-bottom:0.75rem"></div>
+                <div style="display:flex;flex-direction:column;gap:0.5rem">
+                  <input class="inline-input" type="password" id="cfg-cur-pw" placeholder="Current password">
+                  <input class="inline-input" type="password" id="cfg-new-pw" placeholder="New password (min 8 chars)">
+                  <input class="inline-input" type="password" id="cfg-conf-pw" placeholder="Confirm new password">
+                  <button class="btn btn-ghost btn-sm" onclick="saveAdminPassword()">Update Password</button>
                 </div>
-                <div class="detail-row">
-                  <span class="dr-label">Status</span>
-                  <span id="d-status">—</span>
-                </div>
-                <div class="detail-row">
-                  <span class="dr-label">Registered</span>
-                  <span class="dr-val" id="d-created">—</span>
-                </div>
-                <div class="detail-row">
-                  <span class="dr-label">Last Login</span>
-                  <span class="dr-val" id="d-lastlogin">—</span>
-                </div>
-                <div class="detail-row">
-                  <span class="dr-label">User ID</span>
-                  <span class="dr-val" id="d-id" style="font-size:0.65rem;color:var(--text3)">—</span>
+
+                <h3 style="margin-top:1.5rem">Admin Username</h3>
+                <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
+                  <input class="inline-input" type="text" id="cfg-new-user" placeholder="New username">
+                  <button class="btn btn-ghost btn-sm" onclick="saveAdminUsername()">Save</button>
                 </div>
               </div>
 
-              <!-- Email -->
+              <!-- Log settings -->
               <div class="detail-card">
-                <h3>✉ Email Address</h3>
-                <div style="margin-bottom:0.75rem;font-size:0.82rem;color:var(--text2)" id="d-email-display">—</div>
-                <div class="inline-edit">
-                  <input class="inline-input" type="email" id="d-email-input" placeholder="new@email.com">
-                  <button class="btn btn-ghost btn-sm" onclick="saveEmail()">Save</button>
+                <h3>Log File</h3>
+                <p style="font-size:0.78rem;color:var(--text3);margin-bottom:0.75rem">The filename inside the mounted log directory (<span class="mono" style="font-size:0.72rem">/logs/</span>) that the tailer reads. Change takes effect within 10 seconds — no restart needed.</p>
+                <div style="display:flex;gap:0.5rem">
+                  <input class="inline-input" type="text" id="cfg-logfile-input" placeholder="e.g. full_user.log">
+                  <button class="btn btn-ghost btn-sm" onclick="saveLogSettings()">Save</button>
+                </div>
+
+                <h3 style="margin-top:1.5rem">Log Retention</h3>
+                <p style="font-size:0.78rem;color:var(--text3);margin-bottom:0.75rem">Download records older than this many days are automatically deleted nightly.</p>
+                <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.6rem">
+                  <label style="font-size:0.78rem;color:var(--text2);display:flex;align-items:center;gap:0.5rem;cursor:pointer">
+                    <input type="checkbox" id="cfg-retention-enabled" onchange="saveRetentionToggle()" style="width:14px;height:14px;accent-color:var(--accent)">
+                    Enable automatic log pruning
+                  </label>
+                </div>
+                <div style="display:flex;gap:0.5rem;align-items:center">
+                  <input class="inline-input" type="number" id="cfg-retention" placeholder="days" min="1" max="3650" style="width:100px">
+                  <span style="font-size:0.78rem;color:var(--text3)">days</span>
+                  <button class="btn btn-ghost btn-sm" onclick="saveRetention()">Save</button>
                 </div>
               </div>
-
-              <!-- Password -->
-              <div class="detail-card">
-                <h3>🔑 Change Password</h3>
-                <div class="field" style="margin-bottom:0.75rem">
-                  <input class="inline-input" type="password" id="d-newpass" placeholder="New password (min 8 chars)" style="width:100%">
-                </div>
-                <div class="field" style="margin-bottom:0.75rem">
-                  <input class="inline-input" type="password" id="d-confpass" placeholder="Confirm new password" style="width:100%">
-                </div>
-                <button class="btn btn-ghost btn-sm" onclick="savePassword()">Update Password</button>
-              </div>
-
-              <!-- Notes -->
-              <div class="detail-card">
-                <h3>📝 Admin Notes</h3>
-                <textarea class="inline-input" id="d-notes" placeholder="Internal notes about this user…" style="width:100%;margin-bottom:0.75rem;min-height:80px"></textarea>
-                <button class="btn btn-ghost btn-sm" onclick="saveNotes()">Save Notes</button>
-              </div>
-
             </div>
 
-            <!-- Danger zone -->
-            <div class="detail-card" style="border-color:rgba(239,68,68,0.25)">
-              <h3 style="color:var(--red)">⚠ Actions</h3>
-              <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.5rem">
-                <button class="btn btn-sm" id="d-toggle-btn" onclick="detailToggle()">—</button>
-                <button class="btn btn-danger btn-sm" onclick="detailDelete()">Delete Account</button>
+            <!-- User Import/Export -->
+            <div class="detail-card" style="margin-top:1rem">
+              <h3>User Database</h3>
+              <p style="font-size:0.78rem;color:var(--text3);margin-bottom:0.75rem">Export all user accounts (including hashed passwords) to a JSON file for backup or migration. Import merges users — existing usernames and emails are skipped.</p>
+              <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+                <button class="btn btn-ghost btn-sm" onclick="exportUsers()">↓ Export Users JSON</button>
+                <label class="btn btn-ghost btn-sm" style="cursor:pointer">
+                  ↑ Import Users JSON
+                  <input type="file" id="import-file" accept=".json" style="display:none" onchange="importUsers(this)">
+                </label>
+              </div>
+              <div id="import-result" class="alert" style="margin-top:0.75rem;margin-bottom:0"></div>
+            </div>
+
+            <!-- CSV Export -->
+            <div class="detail-card" style="margin-top:1rem">
+              <h3>Download Log Export</h3>
+              <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.75rem">
+                <button class="btn btn-ghost btn-sm" onclick="exportCSV('users')">↓ Export User Downloads CSV</button>
+                <button class="btn btn-ghost btn-sm" onclick="exportCSV('anon')">↓ Export Anon Downloads CSV</button>
               </div>
             </div>
           </div>
 
-          <!-- AUDIT LOG -->
-          <div id="panel-audit" class="panel">
-            <div class="table-card">
-              <div class="table-toolbar">
-                <span style="font-size:0.8rem;font-weight:500">Audit Log</span>
-                <button class="btn btn-ghost btn-sm" onclick="loadAudit()" style="margin-left:auto">↻ Refresh</button>
+          <!-- ── User Downloads ── -->
+          <div class="panel" id="panel-user-dl">
+            <div class="stats-row">
+              <div class="stat-card"><div class="stat-label">Total Downloads</div><div class="stat-val" id="udl-total">—</div></div>
+              <div class="stat-card"><div class="stat-label">Unique Users</div><div class="stat-val" style="color:var(--accent)" id="udl-users">—</div></div>
+              <div class="stat-card"><div class="stat-label">Unique IPs</div><div class="stat-val" style="color:var(--purple)" id="udl-ips">—</div></div>
+              <div class="stat-card"><div class="stat-label">Total Transferred</div><div class="stat-val" style="font-size:1.3rem;color:var(--teal)" id="udl-bytes">—</div></div>
+            </div>
+            <div class="table-card" style="margin-bottom:1rem">
+              <div class="log-filter-bar">
+                <label>User</label><input type="text" id="udl-f-user" placeholder="username…" style="width:130px" oninput="udlDebounce()">
+                <label>IP</label><input type="text" id="udl-f-ip" placeholder="IP…" style="width:130px" oninput="udlDebounce()">
+                <label>File</label><input type="text" id="udl-f-file" placeholder="filename…" style="width:160px" oninput="udlDebounce()">
+                <label>From</label><input type="date" id="udl-f-from" onchange="loadUserDl(1)">
+                <label>To</label><input type="date" id="udl-f-to" onchange="loadUserDl(1)">
+                <button class="btn btn-ghost btn-xs" onclick="clearUdlFilters()">Clear</button>
               </div>
-              <div class="audit-head">
-                <div>Time</div><div>User</div><div>Action</div><div>Detail</div><div>IP</div>
+              <div class="table-wrap"><table><thead><tr><th>Timestamp</th><th>Username</th><th>IP Address</th><th>Path</th><th>Size</th></tr></thead><tbody id="udl-tbody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table></div>
+              <div class="log-pager">
+                <span id="udl-pager-info">—</span>
+                <div class="pager-btns">
+                  <button class="btn btn-ghost btn-xs" id="udl-prev" onclick="udlPage(-1)">← Prev</button>
+                  <button class="btn btn-ghost btn-xs" id="udl-next" onclick="udlPage(+1)">Next →</button>
+                </div>
               </div>
-              <div class="audit-list" id="audit-list"></div>
+            </div>
+            <div class="three-col">
+              <div class="detail-card"><h3>Top Files</h3><ul class="top-list" id="udl-top-files"></ul></div>
+              <div class="detail-card"><h3>Top Users</h3><ul class="top-list" id="udl-top-users"></ul></div>
+              <div class="detail-card"><h3>Top IPs</h3><ul class="top-list" id="udl-top-ips"></ul></div>
+            </div>
+          </div>
+
+          <!-- ── Anon Downloads ── -->
+          <div class="panel" id="panel-anon-dl">
+
+            <div class="stats-row">
+              <div class="stat-card"><div class="stat-label">Total Downloads</div><div class="stat-val" id="adl-total">—</div></div>
+              <div class="stat-card"><div class="stat-label">Unique IPs</div><div class="stat-val" style="color:var(--purple)" id="adl-ips">—</div></div>
+              <div class="stat-card"><div class="stat-label">Total Transferred</div><div class="stat-val" style="font-size:1.3rem;color:var(--teal)" id="adl-bytes">—</div></div>
+            </div>
+            <div class="table-card" style="margin-bottom:1rem">
+              <div class="log-filter-bar">
+                <label>IP</label><input type="text" id="adl-f-ip" placeholder="IP address…" style="width:150px" oninput="adlDebounce()">
+                <label>File</label><input type="text" id="adl-f-file" placeholder="filename…" style="width:180px" oninput="adlDebounce()">
+                <label>From</label><input type="date" id="adl-f-from" onchange="loadAnonDl(1)">
+                <label>To</label><input type="date" id="adl-f-to" onchange="loadAnonDl(1)">
+                <button class="btn btn-ghost btn-xs" onclick="clearAdlFilters()">Clear</button>
+              </div>
+              <div class="table-wrap"><table><thead><tr><th>Timestamp</th><th>IP Address</th><th>Path</th><th>Size</th></tr></thead><tbody id="adl-tbody"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody></table></div>
+              <div class="log-pager">
+                <span id="adl-pager-info">—</span>
+                <div class="pager-btns">
+                  <button class="btn btn-ghost btn-xs" id="adl-prev" onclick="adlPage(-1)">← Prev</button>
+                  <button class="btn btn-ghost btn-xs" id="adl-next" onclick="adlPage(+1)">Next →</button>
+                </div>
+              </div>
+            </div>
+            <div class="two-col">
+              <div class="detail-card"><h3>Top Files</h3><ul class="top-list" id="adl-top-files"></ul></div>
+              <div class="detail-card"><h3>Top IPs</h3><ul class="top-list" id="adl-top-ips"></ul></div>
+            </div>
+          </div>
+
+          <!-- ── Stats / Charts ── -->
+          <div class="panel" id="panel-stats">
+            <!-- Trend summary cards -->
+            <div class="stats-row" id="summary-cards">
+              <div class="stat-card">
+                <div class="stat-label">User Downloads</div>
+                <div class="stat-val" id="sum-user-dl">—</div>
+                <div class="stat-trend" id="sum-user-dl-trend"></div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">User Data Out</div>
+                <div class="stat-val" style="font-size:1.3rem" id="sum-user-bytes">—</div>
+                <div class="stat-trend" id="sum-user-bytes-trend"></div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Anon Downloads</div>
+                <div class="stat-val" id="sum-anon-dl">—</div>
+                <div class="stat-trend" id="sum-anon-dl-trend"></div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Anon Data Out</div>
+                <div class="stat-val" style="font-size:1.3rem" id="sum-anon-bytes">—</div>
+                <div class="stat-trend" id="sum-anon-bytes-trend"></div>
+              </div>
+            </div>
+
+            <!-- Range selector -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+              <span style="font-size:0.78rem;color:var(--text3)">Time range</span>
+              <div class="range-tabs">
+                <button class="range-tab" onclick="setRange(1)">1d</button>
+                <button class="range-tab" onclick="setRange(7)">7d</button>
+                <button class="range-tab active" onclick="setRange(30)">30d</button>
+                <button class="range-tab" onclick="setRange(90)">90d</button>
+              </div>
+            </div>
+
+            <!-- Combined downloads over time -->
+            <div class="chart-card">
+              <h3>Downloads Over Time <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;font-size:0.75rem" id="chart-range-label">last 30 days</span></h3>
+              <div class="chart-wrap"><canvas id="chart-timeline"></canvas></div>
+            </div>
+
+            <!-- Bytes over time -->
+            <div class="chart-card">
+              <h3>Data Transferred Over Time</h3>
+              <div class="chart-wrap"><canvas id="chart-bytes"></canvas></div>
+            </div>
+
+            <div class="two-col">
+              <!-- Top files bar chart -->
+              <div class="chart-card" style="margin-bottom:0">
+                <h3>Top Files (by download count)</h3>
+                <div class="chart-wrap"><canvas id="chart-top-files"></canvas></div>
+              </div>
+              <!-- Per-user breakdown bar chart -->
+              <div class="chart-card" style="margin-bottom:0">
+                <h3>Top Users (by download count)</h3>
+                <div class="chart-wrap"><canvas id="chart-top-users"></canvas></div>
+              </div>
             </div>
           </div>
 
@@ -1015,150 +596,37 @@ textarea.inline-input {
   </div><!-- /admin-app -->
 </div><!-- /page-admin -->
 
-<!-- Toast -->
-<div id="toast"></div>
-
 <script>
+// ── Global state ──────────────────────────────────────────────────────────────
 const API = '/api';
-let tok = sessionStorage.getItem('cios_tok') || null;
+let tok = sessionStorage.getItem('admin_token') || '';
 let allUsers = [];
 let detailUser = null;
+let currentRange = 30;
+let charts = {};
 
-// ── PAGES ───────────────────────────────────────────────────────────────────
-function showPage(p) {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  document.getElementById('page-' + p).classList.add('active');
-  if (p === 'admin') initAdmin();
+// ── Chart.js global defaults ──────────────────────────────────────────────────
+Chart.defaults.color = '#64748b';
+Chart.defaults.borderColor = '#232836';
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 11;
+
+// ── Routing ───────────────────────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
 }
 
-// ── REGISTER ────────────────────────────────────────────────────────────────
-function clearRegErr() {
-  ['user','email','pass','conf'].forEach(f => {
-    document.getElementById('re-' + f).style.display = 'none';
-    document.getElementById('r-' + f).classList.remove('err');
-  });
-}
-
-function setRegErr(f, msg) {
-  const e = document.getElementById('re-' + f);
-  e.textContent = msg; e.style.display = 'block';
-  document.getElementById('r-' + f).classList.add('err');
-}
-
-function regAlert(msg, type) {
-  const el = document.getElementById('reg-alert');
-  el.textContent = msg; el.className = 'alert ' + type; el.style.display = 'block';
-}
-
-async function doRegister() {
-  clearRegErr();
-  document.getElementById('reg-alert').style.display = 'none';
-  const username = document.getElementById('r-user').value.trim();
-  const email    = document.getElementById('r-email').value.trim();
-  const password = document.getElementById('r-pass').value;
-  const confirm  = document.getElementById('r-conf').value;
-
-  let ok = true;
-  if (!username) { setRegErr('user','Required'); ok=false; }
-  if (!email)    { setRegErr('email','Required'); ok=false; }
-  if (!password) { setRegErr('pass','Required'); ok=false; }
-  if (password !== confirm) { setRegErr('conf','Passwords do not match'); ok=false; }
-  if (!ok) return;
-
-  const btn = document.getElementById('reg-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Creating…';
-
-  try {
-    const res = await fetch(API + '/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, email, password, confirm_password: confirm })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      regAlert('✓ ' + data.message, 'ok');
-      ['user','email','pass','conf'].forEach(f => document.getElementById('r-' + f).value = '');
-    } else {
-      const msg = Array.isArray(data.detail)
-        ? data.detail.map(e => e.msg).join(' · ')
-        : (data.detail || 'Registration failed');
-      regAlert(msg, 'err');
-    }
-  } catch(e) { regAlert('Network error — please try again', 'err'); }
-  finally { btn.disabled = false; btn.textContent = 'Create Account'; }
-}
-
-// ── ADMIN AUTH ───────────────────────────────────────────────────────────────
-function initAdmin() {
-  if (tok) { showApp(); loadDashboard(); }
-}
-
-async function doAdminLogin() {
-  const username = document.getElementById('al-user').value.trim();
-  const password = document.getElementById('al-pass').value;
-  const alertEl  = document.getElementById('al-alert');
-  alertEl.style.display = 'none';
-
-  try {
-    const res = await fetch(API + '/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      tok = data.access_token;
-      sessionStorage.setItem('cios_tok', tok);
-      showApp();
-      loadDashboard();
-    } else {
-      alertEl.textContent = data.detail || 'Login failed';
-      alertEl.className = 'alert err';
-      alertEl.style.display = 'block';
-    }
-  } catch(e) {
-    alertEl.textContent = 'Network error';
-    alertEl.className = 'alert err';
-    alertEl.style.display = 'block';
-  }
-}
-
-function showApp() {
+function showAdminApp() {
   document.getElementById('admin-login').style.display = 'none';
   document.getElementById('admin-app').style.display = 'block';
+  navTo('dashboard');
 }
 
-function doLogout() {
-  tok = null;
-  sessionStorage.removeItem('cios_tok');
-  document.getElementById('admin-login').style.display = 'flex';
-  document.getElementById('admin-app').style.display = 'none';
-  document.getElementById('al-user').value = '';
-  document.getElementById('al-pass').value = '';
-}
-
-// ── API HELPERS ───────────────────────────────────────────────────────────────
-async function api(method, path, body) {
-  const opts = {
-    method,
-    headers: { 'Authorization': 'Bearer ' + tok }
-  };
-  if (body) {
-    opts.headers['Content-Type'] = 'application/json';
-    opts.body = JSON.stringify(body);
-  }
-  const res = await fetch(API + path, opts);
-  if (res.status === 401) { doLogout(); throw new Error('Unauthorized'); }
-  return { ok: res.ok, status: res.status, data: await res.json() };
-}
-
-// ── NAVIGATION ───────────────────────────────────────────────────────────────
-const panelTitles = {
-  dashboard: 'Dashboard',
-  users: 'All Users',
-  'user-detail': 'User Detail',
-  audit: 'Audit Log'
+var panelTitles = {
+  dashboard: 'Dashboard', users: 'All Users', 'user-detail': 'User Detail',
+  audit: 'Audit Log', 'user-dl': 'User Downloads', 'anon-dl': 'Anonymous Downloads',
+  stats: 'Charts & Statistics', settings: 'Settings',
 };
 
 function navTo(panel) {
@@ -1173,9 +641,98 @@ function navTo(panel) {
   if (panel === 'dashboard') loadDashboard();
   if (panel === 'users')     loadUsers();
   if (panel === 'audit')     loadAudit();
+  if (panel === 'user-dl')   { loadUserDlStats(); loadUserDl(1); }
+  if (panel === 'anon-dl')   { loadAnonDlStats(); loadAnonDl(1); }
+  if (panel === 'stats')     loadStats(currentRange);
+  if (panel === 'settings')  loadSettings();
 }
 
-// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+// ── Auth ──────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const username = document.getElementById('l-user').value.trim();
+  const password = document.getElementById('l-pass').value;
+  if (!username || !password) { showAlert('login-alert', 'err', 'Enter credentials'); return; }
+  try {
+    const res = await fetch(API + '/admin/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await res.json();
+    if (res.ok) { tok = data.access_token; sessionStorage.setItem('admin_token', tok); showAdminApp(); }
+    else showAlert('login-alert', 'err', data.detail || 'Login failed');
+  } catch(e) { showAlert('login-alert', 'err', 'Network error'); }
+}
+
+function doLogout() {
+  tok = ''; sessionStorage.removeItem('admin_token');
+  document.getElementById('admin-login').style.display = 'flex';
+  document.getElementById('admin-app').style.display = 'none';
+}
+
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Authorization': 'Bearer ' + tok } };
+  if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+  const res = await fetch(API + path, opts);
+  if (res.status === 401) { doLogout(); throw new Error('Unauthorized'); }
+  return { ok: res.ok, status: res.status, data: await res.json() };
+}
+
+// ── Registration ──────────────────────────────────────────────────────────────
+async function doRegister() {
+  clearRegErrors();
+  const username = document.getElementById('r-user').value.trim();
+  const email    = document.getElementById('r-email').value.trim();
+  const password = document.getElementById('r-pass').value;
+  const confirm  = document.getElementById('r-pass2').value;
+  let ok = true;
+  if (!username) { showFieldErr('err-user', 'Username is required'); ok = false; }
+  if (!email)    { showFieldErr('err-email', 'Email is required');   ok = false; }
+  if (!password) { showFieldErr('err-pass', 'Password is required'); ok = false; }
+  if (password !== confirm) { showFieldErr('err-pass2', 'Passwords do not match'); ok = false; }
+  if (!ok) return;
+  const btn = document.getElementById('reg-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Creating…';
+  try {
+    const res = await fetch(API + '/register', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password, confirm_password: confirm }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showAlert('reg-alert', 'ok', data.message);
+      ['r-user','r-email','r-pass','r-pass2'].forEach(id => document.getElementById(id).value = '');
+    } else {
+      const msg = data.detail;
+      if (typeof msg === 'string') {
+        if (msg.toLowerCase().includes('username')) showFieldErr('err-user', msg);
+        else if (msg.toLowerCase().includes('email')) showFieldErr('err-email', msg);
+        else if (msg.toLowerCase().includes('password')) showFieldErr('err-pass', msg);
+        else showAlert('reg-alert', 'err', msg);
+      } else if (Array.isArray(msg)) {
+        msg.forEach(e => {
+          const loc = e.loc?.[e.loc.length - 1] || '';
+          if (loc === 'username') showFieldErr('err-user', e.msg);
+          else if (loc === 'email') showFieldErr('err-email', e.msg);
+          else if (loc === 'password') showFieldErr('err-pass', e.msg);
+          else if (loc === 'confirm_password') showFieldErr('err-pass2', e.msg);
+          else showAlert('reg-alert', 'err', e.msg);
+        });
+      }
+    }
+  } catch(e) { showAlert('reg-alert', 'err', 'Network error. Please try again.'); }
+  finally { btn.disabled = false; btn.textContent = 'Create Account'; }
+}
+
+function clearRegErrors() {
+  ['err-user','err-email','err-pass','err-pass2'].forEach(id => {
+    const el = document.getElementById(id); if (el) { el.style.display='none'; el.textContent=''; }
+  });
+  const al = document.getElementById('reg-alert'); if (al) al.style.display = 'none';
+}
+function showFieldErr(id, msg) { const el = document.getElementById(id); if(el){el.textContent=msg;el.style.display='block';} }
+function showAlert(id, type, msg) { const el = document.getElementById(id); if(el){el.className='alert '+type;el.textContent=msg;el.style.display='block';} }
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
 async function loadDashboard() {
   try {
     const { data } = await api('GET', '/admin/stats');
@@ -1183,16 +740,14 @@ async function loadDashboard() {
     document.getElementById('s-enabled').textContent  = data.enabled;
     document.getElementById('s-disabled').textContent = data.disabled;
   } catch(e) {}
-
   try {
     const { data } = await api('GET', '/admin/users');
     allUsers = data.users;
-    const recent = [...allUsers].slice(0, 8);
-    document.getElementById('recent-tbody').innerHTML = recent.map(u => `
+    document.getElementById('recent-tbody').innerHTML = allUsers.slice(0, 8).map(u => `
       <tr>
         <td class="mono">${esc(u.username)}</td>
         <td class="muted small">${esc(u.email)}</td>
-        <td><span class="badge ${u.enabled ? 'badge-on' : 'badge-off'}">${u.enabled ? 'Active' : 'Disabled'}</span></td>
+        <td><span class="badge ${u.enabled?'badge-on':'badge-off'}">${u.enabled?'Active':'Disabled'}</span></td>
         <td class="muted small">${fmtDate(u.created_at)}</td>
         <td><button class="btn btn-ghost btn-xs" onclick="openDetail('${u.id}')">View →</button></td>
       </tr>
@@ -1200,63 +755,43 @@ async function loadDashboard() {
   } catch(e) {}
 }
 
-// ── USERS LIST ────────────────────────────────────────────────────────────────
+// ── Users ─────────────────────────────────────────────────────────────────────
 async function loadUsers() {
-  try {
-    const { data } = await api('GET', '/admin/users');
-    allUsers = data.users;
-    renderUsers();
-  } catch(e) { toast('Failed to load users', 'err'); }
+  try { const { data } = await api('GET', '/admin/users'); allUsers = data.users; renderUsers(); }
+  catch(e) { toast('Failed to load users', 'err'); }
 }
 
 function renderUsers() {
-  const q      = (document.getElementById('user-search')?.value || '').toLowerCase();
-  const filter = document.getElementById('user-filter')?.value || 'all';
-  let users    = allUsers;
-
-  if (filter === 'enabled')  users = users.filter(u => u.enabled);
-  if (filter === 'disabled') users = users.filter(u => !u.enabled);
-  if (q) users = users.filter(u =>
-    u.username.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
-  );
-
-  document.getElementById('user-count').textContent = `${users.length} user${users.length !== 1 ? 's' : ''}`;
-
+  const q = (document.getElementById('user-search')?.value||'').toLowerCase();
+  const f = document.getElementById('user-filter')?.value||'all';
+  let users = allUsers;
+  if (f==='enabled')  users = users.filter(u=>u.enabled);
+  if (f==='disabled') users = users.filter(u=>!u.enabled);
+  if (q) users = users.filter(u=>u.username.toLowerCase().includes(q)||u.email.toLowerCase().includes(q));
+  document.getElementById('user-count').textContent = `${users.length} user${users.length!==1?'s':''}`;
   document.getElementById('users-tbody').innerHTML = users.map(u => `
     <tr>
-      <td>
-        <span class="mono">${esc(u.username)}</span>
-        ${u.notes ? `<span style="font-size:0.65rem;color:var(--text3);margin-left:0.4rem" title="${esc(u.notes)}">📝</span>` : ''}
-      </td>
+      <td><span class="mono">${esc(u.username)}</span>${u.notes?`<span style="font-size:0.65rem;color:var(--text3);margin-left:0.4rem" title="${esc(u.notes)}">📝</span>`:''}</td>
       <td class="muted small">${esc(u.email)}</td>
-      <td><span class="badge ${u.enabled ? 'badge-on' : 'badge-off'}">${u.enabled ? 'Active' : 'Disabled'}</span></td>
+      <td><span class="badge ${u.enabled?'badge-on':'badge-off'}">${u.enabled?'Active':'Disabled'}</span></td>
       <td class="muted small">${fmtDate(u.created_at)}</td>
-      <td class="muted small">${u.last_login ? fmtDate(u.last_login) : '—'}</td>
-      <td>
-        <div class="action-row">
-          <button class="btn btn-ghost btn-xs" onclick="openDetail('${u.id}')">Manage</button>
-          <button class="btn btn-xs ${u.enabled ? 'btn-danger' : 'btn-success'}"
-                  onclick="quickToggle('${u.id}','${esc(u.username)}',${u.enabled})">
-            ${u.enabled ? 'Disable' : 'Enable'}
-          </button>
-        </div>
-      </td>
+      <td class="muted small">${u.last_login?fmtDate(u.last_login):'—'}</td>
+      <td><div class="action-row">
+        <button class="btn btn-ghost btn-xs" onclick="openDetail('${u.id}')">Manage</button>
+        <button class="btn btn-xs ${u.enabled?'btn-danger':'btn-success'}" onclick="quickToggle('${u.id}','${esc(u.username)}',${u.enabled})">${u.enabled?'Disable':'Enable'}</button>
+      </div></td>
     </tr>
-  `).join('') || `<tr><td colspan="6" class="empty">No users match</td></tr>`;
+  `).join('') || '<tr><td colspan="6" class="empty">No users match</td></tr>';
 }
 
 async function quickToggle(id, username, enabled) {
-  if (!confirm(`${enabled ? 'Disable' : 'Enable'} account "${username}"?`)) return;
-  try {
-    const { ok, data } = await api('PUT', `/admin/users/${id}/toggle`);
-    toast(data.message, ok ? 'ok' : 'err');
-    if (ok) { loadUsers(); loadDashboard(); }
-  } catch(e) { toast('Request failed', 'err'); }
+  if (!confirm(`${enabled?'Disable':'Enable'} account "${username}"?`)) return;
+  try { const {ok,data} = await api('PUT',`/admin/users/${id}/toggle`); toast(data.message,ok?'ok':'err'); if(ok){loadUsers();loadDashboard();} }
+  catch(e) { toast('Request failed','err'); }
 }
 
-// ── USER DETAIL ───────────────────────────────────────────────────────────────
 function openDetail(id) {
-  detailUser = allUsers.find(u => u.id === id);
+  detailUser = allUsers.find(u=>u.id===id);
   if (!detailUser) return;
   populateDetail(detailUser);
   navTo('user-detail');
@@ -1264,177 +799,631 @@ function openDetail(id) {
 
 function populateDetail(u) {
   document.getElementById('detail-username-bc').textContent = u.username;
-  document.getElementById('d-username').textContent = u.username;
-  document.getElementById('d-id').textContent = u.id;
-  document.getElementById('d-created').textContent = fmtDate(u.created_at);
+  document.getElementById('d-username').textContent  = u.username;
+  document.getElementById('d-id').textContent        = u.id;
+  document.getElementById('d-created').textContent   = fmtDate(u.created_at);
   document.getElementById('d-lastlogin').textContent = u.last_login ? fmtDate(u.last_login) : 'Never';
   document.getElementById('d-email-display').textContent = u.email;
   document.getElementById('d-email-input').value = u.email;
-  document.getElementById('d-notes').value = u.notes || '';
-  document.getElementById('d-newpass').value = '';
+  document.getElementById('d-notes').value   = u.notes || '';
+  document.getElementById('d-newpass').value  = '';
   document.getElementById('d-confpass').value = '';
-
-  document.getElementById('d-status').innerHTML =
-    `<span class="badge ${u.enabled ? 'badge-on' : 'badge-off'}">${u.enabled ? 'Active' : 'Disabled'}</span>`;
-
+  document.getElementById('d-status').innerHTML = `<span class="badge ${u.enabled?'badge-on':'badge-off'}">${u.enabled?'Active':'Disabled'}</span>`;
   const btn = document.getElementById('d-toggle-btn');
-  if (u.enabled) {
-    btn.textContent = 'Disable Account';
-    btn.className = 'btn btn-danger btn-sm';
-  } else {
-    btn.textContent = 'Enable Account';
-    btn.className = 'btn btn-success btn-sm';
-  }
+  if (u.enabled) { btn.textContent='Disable Account'; btn.className='btn btn-danger btn-sm'; }
+  else           { btn.textContent='Enable Account';  btn.className='btn btn-success btn-sm'; }
 }
 
 async function detailToggle() {
   if (!detailUser) return;
-  const action = detailUser.enabled ? 'Disable' : 'Enable';
-  if (!confirm(`${action} account "${detailUser.username}"?`)) return;
+  if (!confirm(`${detailUser.enabled?'Disable':'Enable'} account "${detailUser.username}"?`)) return;
   try {
-    const { ok, data } = await api('PUT', `/admin/users/${detailUser.id}/toggle`);
-    toast(data.message, ok ? 'ok' : 'err');
-    if (ok) {
-      detailUser.enabled = !detailUser.enabled;
-      // Update in allUsers array too
-      const idx = allUsers.findIndex(u => u.id === detailUser.id);
-      if (idx >= 0) allUsers[idx].enabled = detailUser.enabled;
-      populateDetail(detailUser);
-      loadDashboard();
-    }
-  } catch(e) { toast('Request failed', 'err'); }
+    const {ok,data} = await api('PUT',`/admin/users/${detailUser.id}/toggle`);
+    toast(data.message, ok?'ok':'err');
+    if (ok) { detailUser.enabled=!detailUser.enabled; const i=allUsers.findIndex(u=>u.id===detailUser.id); if(i>=0)allUsers[i].enabled=detailUser.enabled; populateDetail(detailUser); loadDashboard(); }
+  } catch(e) { toast('Request failed','err'); }
 }
 
 async function detailDelete() {
   if (!detailUser) return;
   if (!confirm(`Permanently delete "${detailUser.username}"? This cannot be undone.`)) return;
   try {
-    const { ok, data } = await api('DELETE', `/admin/users/${detailUser.id}`);
-    toast(data.message, ok ? 'ok' : 'err');
-    if (ok) {
-      allUsers = allUsers.filter(u => u.id !== detailUser.id);
-      detailUser = null;
-      navTo('users');
-      loadDashboard();
-    }
-  } catch(e) { toast('Request failed', 'err'); }
+    const {ok,data} = await api('DELETE',`/admin/users/${detailUser.id}`);
+    toast(data.message, ok?'ok':'err');
+    if (ok) { allUsers=allUsers.filter(u=>u.id!==detailUser.id); detailUser=null; navTo('users'); loadDashboard(); }
+  } catch(e) { toast('Request failed','err'); }
 }
 
 async function saveEmail() {
   if (!detailUser) return;
   const email = document.getElementById('d-email-input').value.trim();
-  if (!email) { toast('Email cannot be empty', 'err'); return; }
+  if (!email) { toast('Email cannot be empty','err'); return; }
   try {
-    const { ok, data } = await api('PUT', `/admin/users/${detailUser.id}/email`, { email });
-    toast(data.message || data.detail, ok ? 'ok' : 'err');
-    if (ok) {
-      detailUser.email = email;
-      const idx = allUsers.findIndex(u => u.id === detailUser.id);
-      if (idx >= 0) allUsers[idx].email = email;
-      document.getElementById('d-email-display').textContent = email;
-    }
-  } catch(e) { toast('Request failed', 'err'); }
+    const {ok,data} = await api('PUT',`/admin/users/${detailUser.id}/email`,{email});
+    toast(data.message||data.detail, ok?'ok':'err');
+    if (ok) { detailUser.email=email; const i=allUsers.findIndex(u=>u.id===detailUser.id); if(i>=0)allUsers[i].email=email; document.getElementById('d-email-display').textContent=email; }
+  } catch(e) { toast('Request failed','err'); }
 }
 
 async function savePassword() {
   if (!detailUser) return;
   const password = document.getElementById('d-newpass').value;
   const confirm  = document.getElementById('d-confpass').value;
-  if (!password) { toast('Password cannot be empty', 'err'); return; }
-  if (password.length < 8) { toast('Password must be at least 8 characters', 'err'); return; }
-  if (password !== confirm) { toast('Passwords do not match', 'err'); return; }
+  if (!password) { toast('Password cannot be empty','err'); return; }
+  if (password.length<8) { toast('Password must be at least 8 characters','err'); return; }
+  if (password!==confirm) { toast('Passwords do not match','err'); return; }
   try {
-    const { ok, data } = await api('PUT', `/admin/users/${detailUser.id}/password`,
-      { password, confirm_password: confirm });
-    toast(data.message || data.detail, ok ? 'ok' : 'err');
-    if (ok) {
-      document.getElementById('d-newpass').value = '';
-      document.getElementById('d-confpass').value = '';
-    }
-  } catch(e) { toast('Request failed', 'err'); }
+    const {ok,data} = await api('PUT',`/admin/users/${detailUser.id}/password`,{password,confirm_password:confirm});
+    toast(data.message||data.detail, ok?'ok':'err');
+    if (ok) { document.getElementById('d-newpass').value=''; document.getElementById('d-confpass').value=''; }
+  } catch(e) { toast('Request failed','err'); }
 }
 
 async function saveNotes() {
   if (!detailUser) return;
   const notes = document.getElementById('d-notes').value;
   try {
-    const { ok, data } = await api('PUT', `/admin/users/${detailUser.id}/notes`, { notes });
-    toast(data.message, ok ? 'ok' : 'err');
-    if (ok) {
-      detailUser.notes = notes;
-      const idx = allUsers.findIndex(u => u.id === detailUser.id);
-      if (idx >= 0) allUsers[idx].notes = notes;
-    }
-  } catch(e) { toast('Request failed', 'err'); }
+    const {ok,data} = await api('PUT',`/admin/users/${detailUser.id}/notes`,{notes});
+    toast(data.message, ok?'ok':'err');
+    if (ok) { detailUser.notes=notes; const i=allUsers.findIndex(u=>u.id===detailUser.id); if(i>=0)allUsers[i].notes=notes; }
+  } catch(e) { toast('Request failed','err'); }
 }
 
-// ── AUDIT LOG ─────────────────────────────────────────────────────────────────
+// ── Audit ─────────────────────────────────────────────────────────────────────
 async function loadAudit() {
   try {
-    const { data } = await api('GET', '/admin/audit?limit=200');
-    const list = document.getElementById('audit-list');
-    list.innerHTML = data.map(e => {
-      const cls = {
-        register: 'ap-register',
-        admin_login: 'ap-admin_login',
-        admin_delete: 'ap-admin_delete',
-        admin_enabled: 'ap-admin_enabled',
-        admin_disabled: 'ap-admin_disabled',
-        admin_password_change: 'ap-admin_password_change',
-        admin_email_change: 'ap-admin_email_change',
-        manual_sync: 'ap-manual_sync',
-      }[e.action] || 'ap-default';
-      return `
-        <div class="audit-item">
-          <div class="muted small">${fmtDate(e.created_at)}</div>
-          <div class="mono small">${esc(e.username || '—')}</div>
-          <div><span class="action-pill ${cls}">${esc(e.action)}</span></div>
-          <div class="muted small">${esc(e.detail || '—')}</div>
-          <div class="mono small muted">${esc(e.ip_address || '—')}</div>
-        </div>
-      `;
-    }).join('') || '<div class="empty">No audit entries</div>';
-  } catch(e) { toast('Failed to load audit log', 'err'); }
+    const {data} = await api('GET','/admin/audit?limit=200');
+    const pillCls = {register:'ap-register',admin_login:'ap-admin_login',admin_delete:'ap-admin_delete',admin_enabled:'ap-admin_enabled',admin_disabled:'ap-admin_disabled',admin_password_change:'ap-admin_password_change',admin_email_change:'ap-admin_email_change',manual_sync:'ap-manual_sync'};
+    document.getElementById('audit-list').innerHTML = data.map(e=>`
+      <div class="audit-item">
+        <div class="muted small">${fmtDate(e.created_at)}</div>
+        <div class="mono small">${esc(e.username||'—')}</div>
+        <div><span class="action-pill ${pillCls[e.action]||'ap-default'}">${esc(e.action)}</span></div>
+        <div class="muted small">${esc(e.detail||'—')}</div>
+        <div class="mono small muted">${esc(e.ip_address||'—')}</div>
+      </div>
+    `).join('') || '<div class="empty">No audit entries</div>';
+  } catch(e) { toast('Failed to load audit log','err'); }
 }
 
-// ── SYNC ─────────────────────────────────────────────────────────────────────
+// ── Sync ──────────────────────────────────────────────────────────────────────
 async function doSync() {
   const btn = document.getElementById('nav-sync');
   btn.innerHTML = '<span class="nav-icon"><span class="spin" style="width:10px;height:10px"></span></span> Syncing…';
-  try {
-    const { ok, data } = await api('POST', '/admin/sync');
-    toast(`${data.message} — ${data.users_written} users`, ok ? 'ok' : 'err');
-  } catch(e) { toast('Sync failed', 'err'); }
-  finally { btn.innerHTML = '<span class="nav-icon">↻</span> Sync passwd'; }
+  try { const {ok,data}=await api('POST','/admin/sync'); toast(`${data.message} — ${data.users_written} users`,ok?'ok':'err'); }
+  catch(e) { toast('Sync failed','err'); }
+  finally { btn.innerHTML='<span class="nav-icon">↻</span> Sync passwd'; }
 }
 
-// ── HELPERS ──────────────────────────────────────────────────────────────────
+// ══ USER DOWNLOADS ════════════════════════════════════════════════════════════
+let udlPage_=1, udlPages_=1, udlDeb=null;
+function udlDebounce() { clearTimeout(udlDeb); udlDeb=setTimeout(()=>loadUserDl(1),400); }
+function clearUdlFilters() { ['udl-f-user','udl-f-ip','udl-f-file','udl-f-from','udl-f-to'].forEach(id=>document.getElementById(id).value=''); loadUserDl(1); }
+function udlPage(d) { const n=udlPage_+d; if(n<1||n>udlPages_)return; loadUserDl(n); }
+
+async function loadUserDlStats() {
+  try {
+    const {data,ok}=await api('GET','/admin/logs/users/stats');
+    if (!ok) return;
+    document.getElementById('udl-total').textContent = fmtNum(data.total);
+    document.getElementById('udl-users').textContent = fmtNum(data.unique_users);
+    document.getElementById('udl-ips').textContent   = fmtNum(data.unique_ips);
+    document.getElementById('udl-bytes').textContent = fmtBytes(data.total_bytes);
+    renderTopList('udl-top-files', data.top_files, 'filename');
+    renderTopList('udl-top-users', data.top_users, 'username');
+    renderTopList('udl-top-ips',   data.top_ips,   'ip_address');
+  } catch(e) {}
+}
+
+async function loadUserDl(page) {
+  udlPage_=page;
+  const p=new URLSearchParams({page,limit:100});
+  const u=document.getElementById('udl-f-user').value.trim();
+  const ip=document.getElementById('udl-f-ip').value.trim();
+  const f=document.getElementById('udl-f-file').value.trim();
+  const from=document.getElementById('udl-f-from').value;
+  const to=document.getElementById('udl-f-to').value;
+  if(u)  p.set('username',u);
+  if(ip) p.set('ip',ip);
+  if(f)  p.set('filename',f);
+  if(from) p.set('date_from',from+'T00:00:00Z');
+  if(to)   p.set('date_to',  to  +'T23:59:59Z');
+  const tbody=document.getElementById('udl-tbody');
+  tbody.innerHTML=`<tr><td colspan="6" class="empty"><span class="spin"></span></td></tr>`;
+  try {
+    const {data,ok}=await api('GET',`/admin/logs/users?${p}`);
+    if (!ok) { tbody.innerHTML=`<tr><td colspan="6" class="empty">${esc(data.detail)}</td></tr>`; return; }
+    udlPages_=data.pages;
+    document.getElementById('udl-pager-info').textContent=`${fmtNum(data.total)} records — page ${data.page} of ${data.pages}`;
+    document.getElementById('udl-prev').disabled=page<=1;
+    document.getElementById('udl-next').disabled=page>=data.pages;
+    tbody.innerHTML=data.rows.map(r=>`
+      <tr>
+        <td class="mono small muted">${esc(fmtLogDate(r.logged_at))}</td>
+        <td><span class="mono" style="color:var(--accent-h)">${esc(r.username)}</span></td>
+        <td class="mono small muted">${esc(r.ip_address)}</td>
+        <td class="mono small" title="${esc(r.filepath)}">${esc(stripFtpPath(r.filepath))}</td>
+        <td class="mono small muted">${r.bytes!=null?fmtBytes(r.bytes):'—'}</td>
+      </tr>
+    `).join('')||`<tr><td colspan="5" class="empty">No records found</td></tr>`;
+  } catch(e) { tbody.innerHTML=`<tr><td colspan="5" class="empty">Failed to load</td></tr>`; }
+}
+
+// ══ ANON DOWNLOADS ════════════════════════════════════════════════════════════
+let adlPage_=1, adlPages_=1, adlDeb=null;
+function adlDebounce() { clearTimeout(adlDeb); adlDeb=setTimeout(()=>loadAnonDl(1),400); }
+function clearAdlFilters() { ['adl-f-ip','adl-f-file','adl-f-from','adl-f-to'].forEach(id=>document.getElementById(id).value=''); loadAnonDl(1); }
+function adlPage(d) { const n=adlPage_+d; if(n<1||n>adlPages_)return; loadAnonDl(n); }
+
+async function loadAnonDlStats() {
+  try {
+    const {data,ok}=await api('GET','/admin/logs/anon/stats');
+    if (!ok) return;
+    document.getElementById('adl-total').textContent = fmtNum(data.total);
+    document.getElementById('adl-ips').textContent   = fmtNum(data.unique_ips);
+    document.getElementById('adl-bytes').textContent = fmtBytes(data.total_bytes);
+    renderTopList('adl-top-files', data.top_files, 'filename');
+    renderTopList('adl-top-ips',   data.top_ips,   'ip_address');
+  } catch(e) {}
+}
+
+async function loadAnonDl(page) {
+  adlPage_=page;
+  const p=new URLSearchParams({page,limit:100});
+  const ip=document.getElementById('adl-f-ip').value.trim();
+  const f=document.getElementById('adl-f-file').value.trim();
+  const from=document.getElementById('adl-f-from').value;
+  const to=document.getElementById('adl-f-to').value;
+  if(ip) p.set('ip',ip);
+  if(f)  p.set('filename',f);
+  if(from) p.set('date_from',from+'T00:00:00Z');
+  if(to)   p.set('date_to',  to  +'T23:59:59Z');
+  const tbody=document.getElementById('adl-tbody');
+  tbody.innerHTML=`<tr><td colspan="5" class="empty"><span class="spin"></span></td></tr>`;
+  try {
+    const {data,ok}=await api('GET',`/admin/logs/anon?${p}`);
+    if (!ok) { tbody.innerHTML=`<tr><td colspan="5" class="empty">${esc(data.detail)}</td></tr>`; return; }
+    adlPages_=data.pages;
+    document.getElementById('adl-pager-info').textContent=`${fmtNum(data.total)} records — page ${data.page} of ${data.pages}`;
+    document.getElementById('adl-prev').disabled=page<=1;
+    document.getElementById('adl-next').disabled=page>=data.pages;
+    tbody.innerHTML=data.rows.map(r=>`
+      <tr>
+        <td class="mono small muted">${esc(fmtLogDate(r.logged_at))}</td>
+        <td class="mono small" style="color:var(--purple)">${esc(r.ip_address)}</td>
+        <td class="mono small" title="${esc(r.filepath)}">${esc(stripFtpPath(r.filepath))}</td>
+        <td class="mono small muted">${r.bytes!=null?fmtBytes(r.bytes):'—'}</td>
+      </tr>
+    `).join('')||`<tr><td colspan="4" class="empty">No records found</td></tr>`;
+  } catch(e) { tbody.innerHTML=`<tr><td colspan="4" class="empty">Failed to load</td></tr>`; }
+}
+
+// ══ STATS / CHARTS ════════════════════════════════════════════════════════════
+
+function setRange(days) {
+  currentRange = days;
+  document.querySelectorAll('.range-tab').forEach(t => {
+    t.classList.toggle('active', t.textContent === `${days}d` || (days===1&&t.textContent==='1d'));
+  });
+  loadStats(days);
+}
+
+async function loadStats(days) {
+  const bucket = days <= 1 ? 'hour' : days <= 14 ? 'day' : 'day';
+  const label  = days===1 ? 'last 24 hours' : `last ${days} days`;
+  document.getElementById('chart-range-label').textContent = label;
+
+  // Parallel fetches
+  const [summaryRes, userTlRes, anonTlRes, breakdownRes, udlStatsRes] = await Promise.allSettled([
+    api('GET', `/admin/logs/summary?days=${days}`),
+    api('GET', `/admin/logs/users/timeline?days=${days}&bucket=${bucket}`),
+    api('GET', `/admin/logs/anon/timeline?days=${days}&bucket=${bucket}`),
+    api('GET', `/admin/logs/users/breakdown?days=${days}`),
+    api('GET', `/admin/logs/users/stats`),
+  ]);
+
+  // Summary cards
+  if (summaryRes.status==='fulfilled' && summaryRes.value.ok) {
+    const s = summaryRes.value.data;
+    setSummaryCard('sum-user-dl',    'sum-user-dl-trend',    s.user_downloads);
+    setSummaryCard('sum-anon-dl',    'sum-anon-dl-trend',    s.anon_downloads);
+    setSummaryCardBytes('sum-user-bytes', 'sum-user-bytes-trend', s.user_bytes);
+    setSummaryCardBytes('sum-anon-bytes', 'sum-anon-bytes-trend', s.anon_bytes);
+  }
+
+  // Combined timeline chart
+  if (userTlRes.status==='fulfilled' && anonTlRes.status==='fulfilled') {
+    const userTl = userTlRes.value.ok ? userTlRes.value.data : [];
+    const anonTl = anonTlRes.value.ok ? anonTlRes.value.data : [];
+    renderTimelineChart(userTl, anonTl, bucket);
+    renderBytesChart(userTl, anonTl, bucket);
+  }
+
+  // Top files from user stats
+  if (udlStatsRes.status==='fulfilled' && udlStatsRes.value.ok) {
+    renderTopFilesChart(udlStatsRes.value.data.top_files);
+  }
+
+  // Per-user breakdown
+  if (breakdownRes.status==='fulfilled' && breakdownRes.value.ok) {
+    renderTopUsersChart(breakdownRes.value.data);
+  }
+}
+
+function setSummaryCard(valId, trendId, metric) {
+  document.getElementById(valId).textContent = fmtNum(metric.current);
+  const el = document.getElementById(trendId);
+  if (metric.change === null) { el.textContent = 'No prior data'; el.className='stat-trend trend-flat'; return; }
+  const arrow = metric.change > 0 ? '↑' : metric.change < 0 ? '↓' : '→';
+  const cls   = metric.change > 0 ? 'trend-up' : metric.change < 0 ? 'trend-down' : 'trend-flat';
+  const sign  = metric.change > 0 ? '+' : '';
+  el.textContent = `${arrow} ${sign}${metric.change}% vs prior period`;
+  el.className = 'stat-trend ' + cls;
+}
+
+function setSummaryCardBytes(valId, trendId, metric) {
+  document.getElementById(valId).textContent = fmtBytes(metric.current);
+  const el = document.getElementById(trendId);
+  if (metric.change === null) { el.textContent = 'No prior data'; el.className='stat-trend trend-flat'; return; }
+  const arrow = metric.change > 0 ? '↑' : metric.change < 0 ? '↓' : '→';
+  const cls   = metric.change > 0 ? 'trend-up' : metric.change < 0 ? 'trend-down' : 'trend-flat';
+  const sign  = metric.change > 0 ? '+' : '';
+  el.textContent = `${arrow} ${sign}${metric.change}% vs prior period`;
+  el.className = 'stat-trend ' + cls;
+}
+
+// Merge user + anon timelines onto a shared set of labels
+function mergeTimelines(userTl, anonTl, bucket) {
+  const labelFmt = bucket === 'hour'
+    ? d => new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
+    : d => new Date(d).toLocaleDateString([], {month:'short',day:'numeric'});
+
+  const allBuckets = [...new Set([...userTl.map(r=>r.bucket), ...anonTl.map(r=>r.bucket)])].sort();
+  const userMap = Object.fromEntries(userTl.map(r=>[r.bucket, r]));
+  const anonMap = Object.fromEntries(anonTl.map(r=>[r.bucket, r]));
+
+  return {
+    labels:     allBuckets.map(b => labelFmt(b)),
+    userDl:     allBuckets.map(b => userMap[b]?.downloads || 0),
+    anonDl:     allBuckets.map(b => anonMap[b]?.downloads || 0),
+    userBytes:  allBuckets.map(b => userMap[b]?.bytes || 0),
+    anonBytes:  allBuckets.map(b => anonMap[b]?.bytes || 0),
+  };
+}
+
+function renderTimelineChart(userTl, anonTl, bucket) {
+  const { labels, userDl, anonDl } = mergeTimelines(userTl, anonTl, bucket);
+  const ctx = document.getElementById('chart-timeline').getContext('2d');
+  if (charts.timeline) charts.timeline.destroy();
+  charts.timeline = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Named Users', data: userDl, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.08)', tension: 0.3, pointRadius: 2, fill: true },
+        { label: 'Anonymous',   data: anonDl, borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.08)', tension: 0.3, pointRadius: 2, fill: true },
+      ],
+    },
+    options: chartOptions('Downloads'),
+  });
+}
+
+function renderBytesChart(userTl, anonTl, bucket) {
+  const { labels, userBytes, anonBytes } = mergeTimelines(userTl, anonTl, bucket);
+  const ctx = document.getElementById('chart-bytes').getContext('2d');
+  if (charts.bytes) charts.bytes.destroy();
+  charts.bytes = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Named Users', data: userBytes.map(b=>b/1048576), backgroundColor: 'rgba(59,130,246,0.5)', borderColor: '#3b82f6', borderWidth: 1 },
+        { label: 'Anonymous',   data: anonBytes.map(b=>b/1048576), backgroundColor: 'rgba(139,92,246,0.5)', borderColor: '#8b5cf6', borderWidth: 1 },
+      ],
+    },
+    options: { ...chartOptions('MB'), plugins: { ...chartOptions('MB').plugins }, scales: { ...chartOptions('MB').scales, y: { ...chartOptions('MB').scales.y, ticks: { callback: v => v.toFixed(0)+' MB', color: '#64748b' } } }, },
+  });
+}
+
+function renderTopFilesChart(topFiles) {
+  if (!topFiles || !topFiles.length) return;
+  const ctx = document.getElementById('chart-top-files').getContext('2d');
+  if (charts.topFiles) charts.topFiles.destroy();
+  const labels = topFiles.slice(0,10).map(f => { const p = stripFtpPath(f.filepath || f.filename); return p.length>35 ? '…'+p.slice(-35) : p; });
+  const data   = topFiles.slice(0,10).map(f => f.downloads);
+  charts.topFiles = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Downloads', data, backgroundColor: 'rgba(20,184,166,0.5)', borderColor: '#14b8a6', borderWidth: 1 }] },
+    options: { ...chartOptions('Downloads'), indexAxis: 'y', plugins: { legend: { display: false }, tooltip: { callbacks: { title: items => stripFtpPath(topFiles[items[0].dataIndex]?.filepath || topFiles[items[0].dataIndex]?.filename || '') } } } },
+  });
+}
+
+function renderTopUsersChart(breakdown) {
+  if (!breakdown || !breakdown.length) return;
+  const ctx = document.getElementById('chart-top-users').getContext('2d');
+  if (charts.topUsers) charts.topUsers.destroy();
+  const labels = breakdown.slice(0,15).map(r=>r.username);
+  const data   = breakdown.slice(0,15).map(r=>r.downloads);
+  charts.topUsers = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Downloads', data, backgroundColor: 'rgba(59,130,246,0.5)', borderColor: '#3b82f6', borderWidth: 1 }] },
+    options: { ...chartOptions('Downloads'), indexAxis: 'y', plugins: { legend: { display: false } } },
+  });
+}
+
+function chartOptions(yLabel) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'top', labels: { color: '#94a3b8', boxWidth: 12, padding: 16 } },
+      tooltip: { backgroundColor: '#0e1118', borderColor: '#232836', borderWidth: 1, titleColor: '#e2e8f0', bodyColor: '#94a3b8', padding: 10 },
+    },
+    scales: {
+      x: { grid: { color: '#1a1f2e' }, ticks: { color: '#64748b', maxTicksLimit: 10 } },
+      y: { grid: { color: '#1a1f2e' }, ticks: { color: '#64748b' }, title: { display: false } },
+    },
+  };
+}
+
+// ── Shared helpers ────────────────────────────────────────────────────────────
+function stripFtpPath(p) {
+  if (!p) return '—';
+  const marker = '/cios_www/';
+  const idx = p.indexOf(marker);
+  return idx >= 0 ? p.slice(idx + marker.length) : p;
+}
+
+function renderTopList(elId, items, nameKey) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!items || !items.length) { el.innerHTML='<li style="color:var(--text3);font-size:0.8rem">No data</li>'; return; }
+  el.innerHTML = items.map(item=>{
+    const raw = item[nameKey] || '';
+    const display = (nameKey==='filename' || nameKey==='filepath') ? stripFtpPath(item.filepath || item.filename || raw) : esc(raw);
+    return `
+    <li>
+      <span class="top-name" title="${esc(raw)}">${esc(display)}</span>
+      <span class="top-count">${fmtNum(item.downloads)}</span>
+    </li>
+  `}).join('');
+}
+
+function fmtBytes(b) {
+  if (b==null||b===0) return '0 B';
+  const u=['B','KB','MB','GB','TB']; let i=0,v=b;
+  while(v>=1024&&i<u.length-1){v/=1024;i++;}
+  return v.toFixed(i===0?0:1)+' '+u[i];
+}
+
+function fmtNum(n) { return n==null?'—':n.toLocaleString(); }
+
+function fmtLogDate(s) {
+  if (!s) return '—';
+  const d=new Date(s);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
 function fmtDate(s) {
   if (!s) return '—';
-  const d = new Date(s);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const d=new Date(s);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
 
 function esc(s) {
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 let toastTimer;
-function toast(msg, type = 'info') {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'show ' + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+function toast(msg, type='info') {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='show '+type;
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),3500);
 }
 
-// Restore session
-if (tok) {
-  document.getElementById('admin-login').style.display = 'none';
+// ── Add User Modal ───────────────────────────────────────────────────────────
+function showAddUserModal() {
+  let modal = document.getElementById('add-user-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'add-user-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000';
+    modal.innerHTML = `
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.75rem;width:100%;max-width:400px;">
+        <h2 style="font-size:0.95rem;font-weight:600;margin-bottom:1.25rem">Add User</h2>
+        <div id="add-user-alert" class="alert"></div>
+        <div class="field"><label>Username</label><input class="field input" type="text" id="au-user" placeholder="3–32 chars, letters/numbers/_" style="width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:0.6rem 0.85rem;border-radius:var(--radius);outline:none"></div>
+        <div class="field"><label>Email</label><input type="email" id="au-email" placeholder="user@example.com" style="width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:0.6rem 0.85rem;border-radius:var(--radius);outline:none"></div>
+        <div class="field"><label>Password</label><input type="password" id="au-pass" placeholder="Min 8 characters" style="width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:0.85rem;padding:0.6rem 0.85rem;border-radius:var(--radius);outline:none"></div>
+        <div style="display:flex;gap:0.5rem;margin-top:1rem">
+          <button class="btn btn-primary" style="flex:1" onclick="doAddUser()">Create Account</button>
+          <button class="btn btn-ghost" onclick="document.getElementById('add-user-modal').remove()">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', e => { if(e.target===modal) modal.remove(); });
+  }
+  modal.style.display = 'flex';
 }
+
+async function doAddUser() {
+  const username = document.getElementById('au-user').value.trim();
+  const email    = document.getElementById('au-email').value.trim();
+  const password = document.getElementById('au-pass').value;
+  if (!username||!email||!password) { showAlert('add-user-alert','err','All fields required'); return; }
+  try {
+    const {ok,data} = await api('POST','/admin/users',{username,email,password});
+    if (ok) {
+      toast(`User ${data.username} created`,'ok');
+      document.getElementById('add-user-modal').remove();
+      loadUsers(); loadDashboard();
+    } else {
+      const msg = typeof data.detail==='string' ? data.detail : data.detail?.[0]?.msg || 'Error';
+      showAlert('add-user-alert','err',msg);
+    }
+  } catch(e) { showAlert('add-user-alert','err','Request failed'); }
+}
+
+// ── Settings panel ────────────────────────────────────────────────────────────
+async function loadSettings() {
+  try {
+    const {ok,data} = await api('GET','/admin/settings');
+    if (!ok) return;
+    const statusColor = data.tailer_status==='running' ? 'var(--green)' : 'var(--yellow)';
+    document.getElementById('cfg-status').textContent  = data.tailer_status;
+    document.getElementById('cfg-status').style.color  = statusColor;
+    document.getElementById('cfg-logfile').textContent = data.log_filename;
+    document.getElementById('cfg-lastwrite').textContent = data.tailer_last_write ? fmtLogDate(data.tailer_last_write) : '—';
+    document.getElementById('cfg-rows').textContent    = fmtNum(data.tailer_total_rows);
+    document.getElementById('cfg-logfile-input').value = data.log_filename;
+    document.getElementById('cfg-retention').value     = data.log_retention_days;
+    document.getElementById('cfg-retention-enabled').checked = data.log_retention_enabled;
+  } catch(e) {}
+}
+
+async function saveAdminPassword() {
+  const current = document.getElementById('cfg-cur-pw').value;
+  const np      = document.getElementById('cfg-new-pw').value;
+  const cp      = document.getElementById('cfg-conf-pw').value;
+  if (!current||!np||!cp) { showAlert('pw-alert','err','All fields required'); return; }
+  if (np!==cp)             { showAlert('pw-alert','err','New passwords do not match'); return; }
+  if (np.length<8)         { showAlert('pw-alert','err','Password must be at least 8 characters'); return; }
+  try {
+    const {ok,data} = await api('PUT','/admin/settings/password',{
+      current_password:current, new_password:np, confirm_password:cp
+    });
+    if (ok) {
+      showAlert('pw-alert','ok',data.message);
+      document.getElementById('cfg-cur-pw').value='';
+      document.getElementById('cfg-new-pw').value='';
+      document.getElementById('cfg-conf-pw').value='';
+    } else {
+      showAlert('pw-alert','err', typeof data.detail==='string'?data.detail:data.detail?.[0]?.msg||'Error');
+    }
+  } catch(e) { showAlert('pw-alert','err','Request failed'); }
+}
+
+async function saveAdminUsername() {
+  const nu = document.getElementById('cfg-new-user').value.trim();
+  if (!nu) { toast('Username cannot be empty','err'); return; }
+  try {
+    const {ok,data} = await api('PUT','/admin/settings/username',{new_username:nu});
+    toast(data.message, ok?'ok':'err');
+    if (ok) document.getElementById('cfg-new-user').value='';
+  } catch(e) { toast('Request failed','err'); }
+}
+
+async function saveLogSettings() {
+  const fn = document.getElementById('cfg-logfile-input').value.trim();
+  if (!fn) { toast('Filename cannot be empty','err'); return; }
+  try {
+    const {ok,data} = await api('PUT','/admin/settings/logs',{log_filename:fn});
+    toast(data.message||data.detail, ok?'ok':'err');
+    if (ok) loadSettings();
+  } catch(e) { toast('Request failed','err'); }
+}
+
+async function saveRetentionToggle() {
+  const enabled = document.getElementById('cfg-retention-enabled').checked;
+  try {
+    const {ok,data} = await api('PUT','/admin/settings/logs',{log_retention_enabled:enabled});
+    toast(data.message||data.detail, ok?'ok':'err');
+  } catch(e) { toast('Request failed','err'); }
+}
+
+async function saveRetention() {
+  const days = parseInt(document.getElementById('cfg-retention').value);
+  if (!days||days<1) { toast('Enter a valid number of days','err'); return; }
+  try {
+    const {ok,data} = await api('PUT','/admin/settings/logs',{log_retention_days:days});
+    toast(data.message||data.detail, ok?'ok':'err');
+  } catch(e) { toast('Request failed','err'); }
+}
+
+// ── User import/export ────────────────────────────────────────────────────────────────
+function exportUsers() {
+  fetch(`${API}/admin/users/export`, {headers:{'Authorization':'Bearer '+tok}})
+    .then(r=>r.blob())
+    .then(blob=>{
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'users_export.json';
+      a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    })
+    .catch(()=>toast('Export failed','err'));
+}
+
+async function importUsers(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const resultEl = document.getElementById('import-result');
+  resultEl.style.display='none';
+  try {
+    const text = await file.text();
+    const body = JSON.parse(text);
+    const res = await fetch(`${API}/admin/users/import`, {
+      method: 'POST',
+      headers: {'Authorization':'Bearer '+tok, 'Content-Type':'application/json'},
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    resultEl.className = 'alert ' + (res.ok ? 'ok' : 'err');
+    resultEl.textContent = data.message || data.detail;
+    resultEl.style.display = 'block';
+    if (res.ok) { loadUsers(); loadDashboard(); }
+  } catch(e) {
+    resultEl.className = 'alert err';
+    resultEl.textContent = 'Failed to parse or upload file: ' + e.message;
+    resultEl.style.display = 'block';
+  }
+  input.value = ''; // reset so same file can be re-imported if needed
+}
+
+// ── CSV export ────────────────────────────────────────────────────────────────
+function exportCSV(type) {
+  const params = new URLSearchParams();
+  if (type==='users') {
+    const u=document.getElementById('udl-f-user')?.value.trim();
+    const ip=document.getElementById('udl-f-ip')?.value.trim();
+    const f=document.getElementById('udl-f-file')?.value.trim();
+    const from=document.getElementById('udl-f-from')?.value;
+    const to=document.getElementById('udl-f-to')?.value;
+    if(u)    params.set('username',u);
+    if(ip)   params.set('ip',ip);
+    if(f)    params.set('filename',f);
+    if(from) params.set('date_from',from+'T00:00:00Z');
+    if(to)   params.set('date_to',to+'T23:59:59Z');
+  } else {
+    const ip=document.getElementById('adl-f-ip')?.value.trim();
+    const f=document.getElementById('adl-f-file')?.value.trim();
+    const from=document.getElementById('adl-f-from')?.value;
+    const to=document.getElementById('adl-f-to')?.value;
+    if(ip)   params.set('ip',ip);
+    if(f)    params.set('filename',f);
+    if(from) params.set('date_from',from+'T00:00:00Z');
+    if(to)   params.set('date_to',to+'T23:59:59Z');
+  }
+  const url = `${API}/admin/logs/${type==='users'?'users':'anon'}/export?${params}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.setAttribute('download', type==='users'?'user_downloads.csv':'anon_downloads.csv');
+  // Pass auth header via fetch then blob-download since <a> can't send headers
+  fetch(url, {headers:{'Authorization':'Bearer '+tok}})
+    .then(r=>r.blob())
+    .then(blob=>{
+      const burl = URL.createObjectURL(blob);
+      a.href = burl;
+      a.click();
+      setTimeout(()=>URL.revokeObjectURL(burl),1000);
+    })
+    .catch(()=>toast('Export failed','err'));
+}
+
+// Restore session on load
+if (tok) { document.getElementById('admin-login').style.display='none'; }
 </script>
 </body>
 </html>

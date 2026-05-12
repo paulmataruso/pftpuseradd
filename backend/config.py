@@ -3,15 +3,24 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    # Main user-management database (PostgreSQL)
     database_url: str
+
+    # FTP activity log database (separate PostgreSQL instance)
+    logs_database_url: str
+
+    # Auth — used only to seed admin_config on first start.
+    # After first start, credentials are managed via the admin UI.
     secret_key: str
-    admin_username: str
-    admin_password: str
+    admin_username: str = "admin"
+    admin_password: str = "changeme"
+
+    # ProFTPd passwd file
     ftpd_passwd_path: str = "/ftpshared/ftpd.passwd"
     ftp_uid: int = 1001
     ftp_gid: int = 33
-    # Comma-separated list of allowed CORS origins
-    # e.g. https://ftp.cios.dhitechnical.com,https://cios.dhitechnical.com
+
+    # CORS — comma-separated list or bare *
     allowed_origins_str: str = "*"
 
     @property

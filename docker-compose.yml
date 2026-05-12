@@ -1,12 +1,13 @@
 services:
 
+  # ── Main user-management database ──────────────────────────────────────────
   db:
     image: postgres:16-alpine
     container_name: ciosuseradd_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - db_data:/var/lib/postgresql/data
@@ -20,28 +21,55 @@ services:
       retries: 10
       start_period: 10s
 
+  # ── FTP activity log database ───────────────────────────────────────────────
+  db_logs:
+    image: postgres:16-alpine
+    container_name: ciosuseradd_db_logs
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${LOGS_POSTGRES_DB}
+      POSTGRES_USER:     ${LOGS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${LOGS_POSTGRES_PASSWORD}
+    volumes:
+      - db_logs_data:/var/lib/postgresql/data
+      - ./db/init_logs.sql:/docker-entrypoint-initdb.d/init_logs.sql:ro
+    networks:
+      - db_logs
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${LOGS_POSTGRES_USER} -d ${LOGS_POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ── Backend API ─────────────────────────────────────────────────────────────
   backend:
     build: ./backend
     container_name: ciosuseradd_backend
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      SECRET_KEY: ${SECRET_KEY}
-      ADMIN_USERNAME: ${ADMIN_USERNAME}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      FTPD_PASSWD_PATH: /ftpshared/ftpd.passwd
-      FTP_UID: ${FTP_UID}
-      FTP_GID: ${FTP_GID}
+      DATABASE_URL:        postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      LOGS_DATABASE_URL:   postgresql://${LOGS_POSTGRES_USER}:${LOGS_POSTGRES_PASSWORD}@db_logs:5432/${LOGS_POSTGRES_DB}
+      SECRET_KEY:          ${SECRET_KEY}
+      ADMIN_USERNAME:      ${ADMIN_USERNAME}
+      ADMIN_PASSWORD:      ${ADMIN_PASSWORD}
+      FTPD_PASSWD_PATH:    /ftpshared/ftpd.passwd
+      FTP_UID:             ${FTP_UID}
+      FTP_GID:             ${FTP_GID}
       ALLOWED_ORIGINS_STR: ${ALLOWED_ORIGINS}
     volumes:
       - ftpshared:/ftpshared
     depends_on:
       db:
         condition: service_healthy
+      db_logs:
+        condition: service_healthy
     networks:
       - internal
       - db
+      - db_logs
 
+  # ── Frontend ────────────────────────────────────────────────────────────────
   frontend:
     build: ./frontend
     container_name: ciosuseradd_frontend
@@ -49,6 +77,7 @@ services:
     networks:
       - internal
 
+  # ── Nginx reverse proxy ─────────────────────────────────────────────────────
   nginx:
     image: nginx:alpine
     container_name: ciosuseradd_nginx
@@ -63,8 +92,32 @@ services:
     networks:
       - internal
 
+  # ── Log tailer ──────────────────────────────────────────────────────────────
+  logtailer:
+    build: ./logtailer
+    container_name: ciosuseradd_logtailer
+    restart: unless-stopped
+    environment:
+      FTP_LOG_DIR:       /logs                          # directory, not a single file
+      LOGS_DATABASE_URL: postgresql://${LOGS_POSTGRES_USER}:${LOGS_POSTGRES_PASSWORD}@db_logs:5432/${LOGS_POSTGRES_DB}
+      POLL_INTERVAL:     "1"
+      REOPEN_INTERVAL:   "60"
+      CONFIG_POLL_INTERVAL: "10"
+      BATCH_SIZE:        "100"
+      POS_PATH:          /pos/tailer.pos
+    volumes:
+      - ${FTP_LOG_DIR}:/logs:ro     # entire ProFTPd log directory, read-only
+      - tailer_pos:/pos             # persist file position across restarts
+    depends_on:
+      db_logs:
+        condition: service_healthy
+    networks:
+      - db_logs
+
 volumes:
   db_data:
+  db_logs_data:
+  tailer_pos:
   ftpshared:
     driver: local
     driver_opts:
@@ -76,5 +129,8 @@ networks:
   internal:
     driver: bridge
   db:
+    driver: bridge
+    internal: true
+  db_logs:
     driver: bridge
     internal: true

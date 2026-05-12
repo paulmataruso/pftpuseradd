@@ -20,5 +20,17 @@ CREATE TABLE IF NOT EXISTS audit_log (
     created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS audit_log_username_idx ON audit_log(username);
+CREATE INDEX IF NOT EXISTS audit_log_username_idx  ON audit_log(username);
 CREATE INDEX IF NOT EXISTS audit_log_created_at_idx ON audit_log(created_at);
+
+-- Admin configuration (credentials + system settings)
+-- Seeded on first backend startup from environment variables.
+-- After that, managed entirely via the admin UI.
+CREATE TABLE IF NOT EXISTS admin_config (
+    key         TEXT PRIMARY KEY,
+    value       TEXT NOT NULL,
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Default rows are inserted by the backend on first start, not here,
+-- because the hashed password requires bcrypt which is a Python concern.

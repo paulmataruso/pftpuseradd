@@ -29,7 +29,9 @@ Thumbs.db
 *.swo
 *~
 
-# Generated at runtime — contains hashed passwords, do not commit
+# Generated at runtime — contain hashed passwords, do not commit
 ftpd.passwd
 *.passwd.tmp
+
+# Local config overrides
 daemon.json
